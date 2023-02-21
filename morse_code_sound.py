@@ -3,7 +3,6 @@ import wave
 
 import numpy as np
 from pydub import AudioSegment
-from playsound import playsound
 
 RATE = 44100
 

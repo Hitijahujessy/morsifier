@@ -9,8 +9,9 @@ from kivy.uix.widget import Widget
 import morse_code_sound as ms
 from kivy.core.audio import Sound, SoundLoader
 
-os.environ['KIVY_GL_BACKEND'] = 'angle_sdl2' # Enable to prevent OpenGL error
+# os.environ['KIVY_GL_BACKEND'] = 'angle_sdl2' # Enable to prevent OpenGL error
 root_widget = Builder.load_file('app.kv')
+os.environ["KIVY_AUDIO"] = "audio_sdl2"
 
 MORSE_CODE_DICT = { 'A':' .- ', 'B':' -... ',
                     'C':' -.-. ', 'D':' -.. ', 'E':' . ',
@@ -37,7 +38,7 @@ class MainWidget(Widget):
     def __init__(self, **kwargs):
         super(MainWidget, self).__init__(**kwargs)
         self.typewriter = Clock.create_trigger(self.type_morse, .1)
-        self.morse_loop = Clock.create_trigger(self.repeat, .25)
+        self.morse_loop = Clock.create_trigger(self.repeat, .1)
 
 
     def translate_to_morse(self):
@@ -62,20 +63,20 @@ class MainWidget(Widget):
             
 
     def repeat(self, dt):
-        if self.ids.string_morsify.text != "":
-            if self.loop:
-                self.ids.morse_label.text += self.string[0]
-                self.string = self.string[1:]
-                if len(self.string) > 0:
-                    self.morse_loop()
-                elif len(self.string) == 0:
-                    if self.ids.loop_checkbox.active:
+        if self.loop:
+            self.ids.morse_label.text += self.string[0]
+            self.string = self.string[1:]
+            if len(self.string) > 0:
+                self.morse_loop()
+            elif len(self.string) == 0:
+                if self.ids.loop_checkbox.active:
 
-                        self.string = self.ids.string_morsify.text + " "
-                        self.ids.morse_label.text = ""
-                        self.morse_loop()
-                    else:
-                        pass
+                    self.string = self.ids.string_morsify.text.upper()
+                    self.translate_to_morse()
+                    self.ids.morse_label.text = ""
+                    self.morse_loop()
+                else:
+                    pass
 
 
 class MorsifierApp(App):
