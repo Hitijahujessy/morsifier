@@ -1,0 +1,69 @@
+#:import Factory kivy.factory.Factory
+#: import WipeTransition kivy.uix.screenmanager.WipeTransition
+<MorsifierApp>:
+    size: root.size
+    pos: root.pos
+
+
+<MainWidget>
+    canvas.before:
+        Color:
+            rgb: .9, .8, .55, 1
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
+    FloatLayout:
+        size: root.size
+        pos: root.pos
+
+        TextInput:
+            id: string_morsify
+            size_hint: .75, .1
+            pos_hint: {"center_x": .4, "center_y": .75}
+
+
+        Button:
+            id: proceed_button
+            text: "Proceed"
+            on_press: app.root.string = (string_morsify.text + " ")
+            on_release: app.root.typewriter() if app.root.loop == False else app.root.morse_loop()
+            size_hint: .1, .1
+            pos_hint: {"center_x": .83, "center_y": .75}
+
+        Button:
+            id: reset_button
+            text: "Reset"
+            on_release: string_morsify.text = ""; morse_label.text = ""
+            size_hint: .1, .1
+            pos_hint: {"center_x": .935, "center_y": .75}
+
+        Label:
+            id: morse_label
+            font_size: 72
+            text_size: self.size
+            bold: True
+            size_hint: .95, .4
+            halign: "left"
+            valign: "top"
+            pos_hint: {"center_x": .5, "center_y": .375}
+            canvas.after:
+                Color:
+                    rgba: 1, 1, 1, .5
+                Rectangle:
+                    size: self.size
+                    pos: self.pos
+
+        CheckBox:
+            id: loop_checkbox
+            text: "Loop"
+            #disabled: False if morse_label.text != "" else True
+            on_active: app.root.string = string_morsify.text; app.root.loop = True; morse_label.text = ""; app.root.morse_loop()
+            pos_hint: {"center_x": .05, "center_y": .625}
+            size_hint: .025, .025
+#            canvas.after:
+#                Color:
+#                    rgba: 1, 1, 1, .5
+#                Rectangle:
+#                    size: self.size
+#                    pos: self.pos
