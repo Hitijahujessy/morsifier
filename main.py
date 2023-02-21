@@ -7,7 +7,7 @@ from kivy.lang import Builder
 from kivy.properties import BooleanProperty, ObjectProperty  # type : ignore
 from kivy.uix.widget import Widget
 
-os.environ['KIVY_GL_BACKEND'] = 'angle_sdl2'
+# os.environ['KIVY_GL_BACKEND'] = 'angle_sdl2' # Enable to prevent OpenGL error
 root_widget = Builder.load_file('app.kv')
 
 
