@@ -27,6 +27,10 @@
             id: proceed_button
             text: "Proceed"
             disabled: True if len(morse_label.text) > 0 else False
+            text_size: self.size
+            font_size: self.width/4
+            halign: "center"
+            valign: "middle"
             on_press: app.root.string = (string_morsify.text + " ")
             on_release: app.root.typewriter() if app.root.loop == False else app.root.morse_loop()
             size_hint: .1, .1
@@ -35,6 +39,10 @@
         Button:
             id: reset_button
             text: "Reset"
+            text_size: self.size
+            font_size: self.width/4
+            halign: "center"
+            valign: "middle"
             on_release: string_morsify.text = ""; morse_label.text = ""
             size_hint: .1, .1
             pos_hint: {"center_x": .935, "center_y": .75}
@@ -58,7 +66,7 @@
         CheckBox:
             id: loop_checkbox
             text: "Loop"
-            #disabled: False if morse_label.text != "" else True
+            disabled: False if morse_label.text != "" else True
             on_active: app.root.string = string_morsify.text; app.root.loop = True; morse_label.text = ""; app.root.morse_loop()
             pos_hint: {"center_x": .05, "center_y": .625}
             size_hint: .02, .025
