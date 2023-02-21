@@ -16,6 +16,7 @@ root_widget = Builder.load_file('app.kv')
 class MainWidget(Widget):
     string = ObjectProperty()
     loop = BooleanProperty(False)
+
     def __init__(self, **kwargs):
         super(MainWidget, self).__init__(**kwargs)
         self.typewriter = Clock.create_trigger(self.translate_to_morse, .25)
@@ -42,8 +43,6 @@ class MainWidget(Widget):
                         self.morse_loop()
                     else:
                         pass
-
-
 
 
 class MorsifierApp(App):
