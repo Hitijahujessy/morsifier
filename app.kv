@@ -61,9 +61,9 @@
             on_active: app.root.string = string_morsify.text; app.root.loop = True; morse_label.text = ""; app.root.morse_loop()
             pos_hint: {"center_x": .05, "center_y": .625}
             size_hint: .025, .025
-#            canvas.after:
-#                Color:
-#                    rgba: 1, 1, 1, .5
-#                Rectangle:
-#                    size: self.size
-#                    pos: self.pos
+            canvas.after:
+                Color:
+                    rgba: 1, 1, 1, .5
+                Rectangle:
+                    size: self.size
+                    pos: self.pos

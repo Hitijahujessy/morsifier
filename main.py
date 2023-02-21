@@ -1,10 +1,13 @@
+import os
+
 import kivy
 from kivy.app import App
-from kivy.lang import Builder
-from kivy.properties import ObjectProperty, BooleanProperty
-from kivy.uix.widget import Widget
 from kivy.clock import Clock
+from kivy.lang import Builder
+from kivy.properties import BooleanProperty, ObjectProperty  # type : ignore
+from kivy.uix.widget import Widget
 
+os.environ['KIVY_GL_BACKEND'] = 'angle_sdl2'
 root_widget = Builder.load_file('app.kv')
 
 
@@ -34,7 +37,7 @@ class MainWidget(Widget):
                 elif len(self.string) == 0:
                     if self.ids.loop_checkbox.active:
 
-                        self.string = (self.ids.string_morsify.text + " ")
+                        self.string = self.ids.string_morsify.text + " "
                         self.ids.morse_label.text = ""
                         self.morse_loop()
                     else:
