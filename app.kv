@@ -1,5 +1,6 @@
 #:import Factory kivy.factory.Factory
 #: import WipeTransition kivy.uix.screenmanager.WipeTransition
+#:import Clipboard kivy.core.clipboard.Clipboard
 <MorsifierApp>:
     size: root.size
     pos: root.pos
@@ -32,7 +33,7 @@
             halign: "center"
             valign: "middle"
             on_press: app.root.string = string_morsify.text.upper(); app.root.translate_to_morse()
-            on_release: app.root.typewriter() if app.root.loop == False else app.root.morse_loop()
+            on_release: app.root.typewriter() if app.root.loop == False else app.root.morse_loop(); copy_morse.disabled = False
             size_hint: .1, .1
             pos_hint: {"center_x": .83, "center_y": .75}
 
@@ -43,7 +44,7 @@
             font_size: self.width/4
             halign: "center"
             valign: "middle"
-            on_release: string_morsify.text = ""; morse_label.text = ""
+            on_release: string_morsify.text = ""; morse_label.text = "";  copy_morse.disabled = True
             size_hint: .1, .1
             pos_hint: {"center_x": .935, "center_y": .75}
 
@@ -76,3 +77,15 @@
                 Rectangle:
                     size: self.size
                     pos: self.pos
+
+        Button:
+            id: copy_morse
+            text: "Copy"
+            text_size: self.size
+            font_size: self.width/4
+            disabled: True
+            halign: "center"
+            valign: "middle"
+            on_release: Clipboard.copy(app.root.string)
+            size_hint: .1, .1
+            pos_hint: {"center_x": .9125, "center_y": .1}

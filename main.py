@@ -39,12 +39,11 @@ class MainWidget(Widget):
 
 
     def translate_to_morse(self):
-        
+
         self.string = self.string.replace(" ", " + ")
 
         for char in self.string:
             if char in MORSE_CODE_DICT:
-                #char = MORSE_CODE_DICT[char]
                 self.string = self.string.replace(char, MORSE_CODE_DICT[char])
 
         self.string = self.string.replace("+", "/")
