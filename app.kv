@@ -60,8 +60,8 @@
             #disabled: False if morse_label.text != "" else True
             on_active: app.root.string = string_morsify.text; app.root.loop = True; morse_label.text = ""; app.root.morse_loop()
             pos_hint: {"center_x": .05, "center_y": .625}
-            size_hint: .025, .025
-            canvas.after:
+            size_hint: .02, .025
+            canvas.before:
                 Color:
                     rgba: 1, 1, 1, .5
                 Rectangle:
