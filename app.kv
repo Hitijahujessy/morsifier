@@ -31,7 +31,7 @@
             font_size: self.width/4
             halign: "center"
             valign: "middle"
-            on_press: app.root.string = (string_morsify.text + " ")
+            on_press: app.root.string = string_morsify.text.upper(); app.root.translate_to_morse()
             on_release: app.root.typewriter() if app.root.loop == False else app.root.morse_loop()
             size_hint: .1, .1
             pos_hint: {"center_x": .83, "center_y": .75}
