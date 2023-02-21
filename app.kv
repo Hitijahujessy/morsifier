@@ -26,6 +26,7 @@
         Button:
             id: proceed_button
             text: "Proceed"
+            disabled: True if len(morse_label.text) > 0 else False
             on_press: app.root.string = (string_morsify.text + " ")
             on_release: app.root.typewriter() if app.root.loop == False else app.root.morse_loop()
             size_hint: .1, .1
