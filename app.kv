@@ -26,6 +26,10 @@
         Button:
             id: proceed_button
             text: "Proceed"
+            text_size: self.size
+            font_size: self.width/4
+            halign: "center"
+            valign: "middle"
             on_press: app.root.string = (string_morsify.text + " ")
             on_release: app.root.typewriter() if app.root.loop == False else app.root.morse_loop()
             size_hint: .1, .1
@@ -34,6 +38,10 @@
         Button:
             id: reset_button
             text: "Reset"
+            text_size: self.size
+            font_size: self.width/4
+            halign: "center"
+            valign: "middle"
             on_release: string_morsify.text = ""; morse_label.text = ""
             size_hint: .1, .1
             pos_hint: {"center_x": .935, "center_y": .75}
