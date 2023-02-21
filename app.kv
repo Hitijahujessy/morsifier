@@ -89,3 +89,18 @@
             on_release: Clipboard.copy(app.root.string)
             size_hint: .1, .1
             pos_hint: {"center_x": .9125, "center_y": .1}
+
+        ToggleButton:
+            id: mute_sound
+            text: "Mute"
+            text_size: self.size
+            font_size: self.width/4
+            disabled: False
+            halign: "center"
+            valign: "middle"
+            on_release: app.root.mute_sound(); 
+            on_state: self.background_color = (1.0, 0.0, 0.0, 1.0)
+            active: True
+            background_color: (0.0, 1.0, 0.0, 1.0)
+            size_hint: .1, .1
+            pos_hint: {"center_x": .8125, "center_y": .1}

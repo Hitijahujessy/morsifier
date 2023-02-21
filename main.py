@@ -35,6 +35,7 @@ MORSE_CODE_DICT = {'A': ' .- ', 'B': ' -... ',
 class MainWidget(Widget):
     string = ObjectProperty()
     loop = BooleanProperty(False)
+    sound = True
 
     def __init__(self, **kwargs):
         super(MainWidget, self).__init__(**kwargs)
@@ -53,7 +54,8 @@ class MainWidget(Widget):
         self.string += " "
         ms.create_wav_file(self.string)
         self.morse_sound = SoundLoader.load('morse_code.wav')
-        self.morse_sound.play()
+        if self.sound:
+            self.morse_sound.play()
 
     def type_morse(self, dt):
         self.ids.morse_label.text += self.string[0]
@@ -76,6 +78,21 @@ class MainWidget(Widget):
                         self.morse_loop()
                     else:
                         pass
+    
+    def mute_sound(self):
+        if self.sound == True:
+            self.sound = False
+            try:
+                self.morse_sound.stop()
+            except AttributeError:
+                pass
+        else:
+            self.sound = True
+            try:
+                self.morse_sound.play()
+            except AttributeError:
+                pass
+        
 
 
 class MorsifierApp(App):
