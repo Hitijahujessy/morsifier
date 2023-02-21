@@ -3,7 +3,6 @@ import wave
 
 import numpy as np
 from pydub import AudioSegment
-from playsound import playsound
 
 RATE = 44100
 
@@ -52,4 +51,3 @@ def create_wav_file(morse_string):
         tone = AudioSegment.from_wav('sine0.wav')
         play_sound += tone
     play_sound.export("morse_code.wav", format='wav')
-

@@ -3,32 +3,34 @@ import os
 import kivy
 from kivy.app import App
 from kivy.clock import Clock
+from kivy.core.audio import Sound, SoundLoader
 from kivy.lang import Builder
 from kivy.properties import BooleanProperty, ObjectProperty
 from kivy.uix.widget import Widget
-import morse_code_sound as ms
-from kivy.core.audio import Sound, SoundLoader
 
-os.environ['KIVY_GL_BACKEND'] = 'angle_sdl2' # Enable to prevent OpenGL error
+import morse_code_sound as ms
+
+os.environ['KIVY_GL_BACKEND'] = 'angle_sdl2'  # Enable to prevent OpenGL error
 root_widget = Builder.load_file('app.kv')
 
-MORSE_CODE_DICT = { 'A':' .- ', 'B':' -... ',
-                    'C':' -.-. ', 'D':' -.. ', 'E':' . ',
-                    'F':' ..-. ', 'G':' --. ', 'H':' .... ',
-                    'I':' .. ', 'J':' .--- ', 'K':' -.- ',
-                    'L':' .-.. ', 'M':' -- ', 'N':' -. ',
-                    'O':' --- ', 'P':' .--. ', 'Q':' --.- ',
-                    'R':' .-. ', 'S':' ... ', 'T':' - ',
-                    'U':' ..- ', 'V':' ...- ', 'W':' .-- ',
-                    'X':' -..- ', 'Y':' -.-- ', 'Z':' --.. ',
-                    '1':' .---- ', '2':' ..--- ', '3':' ...-- ',
-                    '4':' ....- ', '5':' ..... ', '6':' -.... ',
-                    '7':' --... ', '8':' ---.. ', '9':' ----. ',
-                    '0':' ----- ', ', ':' --..-- ', '.':' .-.-.- ',
-                    '?':' ..--.. ', '/':' -..-. ', '-':' -....- ',
-                    '(':' -.--. ', ')':' -.--.- '}
+MORSE_CODE_DICT = {'A': ' .- ', 'B': ' -... ',
+                   'C': ' -.-. ', 'D': ' -.. ', 'E': ' . ',
+                   'F': ' ..-. ', 'G': ' --. ', 'H': ' .... ',
+                   'I': ' .. ', 'J': ' .--- ', 'K': ' -.- ',
+                   'L': ' .-.. ', 'M': ' -- ', 'N': ' -. ',
+                   'O': ' --- ', 'P': ' .--. ', 'Q': ' --.- ',
+                   'R': ' .-. ', 'S': ' ... ', 'T': ' - ',
+                   'U': ' ..- ', 'V': ' ...- ', 'W': ' .-- ',
+                   'X': ' -..- ', 'Y': ' -.-- ', 'Z': ' --.. ',
+                   '1': ' .---- ', '2': ' ..--- ', '3': ' ...-- ',
+                   '4': ' ....- ', '5': ' ..... ', '6': ' -.... ',
+                   '7': ' --... ', '8': ' ---.. ', '9': ' ----. ',
+                   '0': ' ----- ', ', ': ' --..-- ', '.': ' .-.-.- ',
+                   '?': ' ..--.. ', '/': ' -..-. ', '-': ' -....- ',
+                   '(': ' -.--. ', ')': ' -.--.- '}
 
 # threading multiprocessing
+
 
 class MainWidget(Widget):
     string = ObjectProperty()
@@ -38,7 +40,6 @@ class MainWidget(Widget):
         super(MainWidget, self).__init__(**kwargs)
         self.typewriter = Clock.create_trigger(self.type_morse, .1)
         self.morse_loop = Clock.create_trigger(self.repeat, .25)
-
 
     def translate_to_morse(self):
 
@@ -59,7 +60,6 @@ class MainWidget(Widget):
         self.string = self.string[1:]
         if len(self.string) > 0:
             self.typewriter()
-            
 
     def repeat(self, dt):
         if self.ids.string_morsify.text != "":
