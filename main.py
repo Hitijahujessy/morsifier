@@ -35,6 +35,7 @@ MORSE_CODE_DICT = {'A': ' .- ', 'B': ' -... ',
 
 class MainWidget(Widget):
     string = ObjectProperty()
+    clipboard = ObjectProperty()
     loop = BooleanProperty(False)
     sound = True
 
@@ -53,8 +54,9 @@ class MainWidget(Widget):
 
         self.string = self.string.replace("+", "/")
         self.string += " "
+        self.clipboard = self.string  # Make sure that copy_morse copies the correct string
         ms.create_wav_file(self.string)
-        self.morse_sound = SoundLoader.load('morse_code.wav')
+        self.morse_sound = SoundLoader.load('sounds/morse_code.wav')
         if self.sound:
             self.morse_sound.play()
 
@@ -73,12 +75,32 @@ class MainWidget(Widget):
             elif len(self.string) == 0:
                 if self.ids.loop_checkbox.active:
 
-                    self.string = self.ids.string_morsify.text.upper()
-                    self.translate_to_morse()
-                    self.ids.morse_label.text = ""
-                    self.morse_loop()
+                        self.string = self.clipboard
+                        self.ids.morse_label.text = ""
+                        self.morse_loop()
                 else:
                     pass
+
+    def mute_sound(self):
+        if self.sound == True:
+            self.sound = False
+            try:
+                self.morse_sound.stop()
+            except AttributeError:
+                pass
+        else:
+            self.sound = True
+            try:
+                self.morse_sound.play()
+            except AttributeError:
+                pass
+
+    def delete_wav_file(self):
+        f = "sounds/morse_code.wav"
+        if os.path.exists(f):
+            os.remove(f)
+        else:
+            print("failed to delete: ", f)
 
 
 class MorsifierApp(App):

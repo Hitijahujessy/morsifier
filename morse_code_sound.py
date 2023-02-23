@@ -10,9 +10,9 @@ RATE = 44100
 def sine_samples(freq, dur):
     x = (2*np.pi*freq/RATE) * np.arange(RATE*dur)
 
-    s = (32767*np.sin(x)).astype(int)
+    sine = (32767*np.sin(x)).astype(int)
 
-    as_packed_bytes = (map(lambda v: struct.pack('h', v), s))
+    as_packed_bytes = (map(lambda v: struct.pack('h', v), sine))
     return as_packed_bytes
 
 
@@ -28,26 +28,28 @@ def output_sound(path, freq, dur):
 
     output_wave(path, frames)
 
-time_unit = 0.1
-output_sound('sine440s.wav', 440, time_unit)
-output_sound('sine440l.wav', 440, time_unit * 3)
-output_sound('sine0.wav', 0, time_unit)
+
+TIME_UNIT = 0.1
+output_sound('sounds/sine440s.wav', 440, TIME_UNIT)
+output_sound('sounds/sine440l.wav', 440, TIME_UNIT * 3)
+output_sound('sounds/sine0.wav', 0, TIME_UNIT)
+
 
 def create_wav_file(morse_string):
-    play_sound = AudioSegment.from_wav('sine0.wav')
+    play_sound = AudioSegment.from_wav('sounds/sine0.wav')
     for morse in morse_string:
         if morse == '.':
-            tone = AudioSegment.from_wav('sine440s.wav')
+            tone = AudioSegment.from_wav('sounds/sine440s.wav')
             play_sound += tone
         elif morse == '-':
-            tone = AudioSegment.from_wav('sine440l.wav')
+            tone = AudioSegment.from_wav('sounds/sine440l.wav')
             play_sound += tone
         elif morse == ' ':
-            tone = AudioSegment.from_wav('sine0.wav')
+            tone = AudioSegment.from_wav('sounds/sine0.wav')
             play_sound += tone * 2
         elif morse == '/':
-            tone = AudioSegment.from_wav('sine0.wav')
+            tone = AudioSegment.from_wav('sounds/sine0.wav')
             play_sound += tone * 6
-        tone = AudioSegment.from_wav('sine0.wav')
+        tone = AudioSegment.from_wav('sounds/sine0.wav')
         play_sound += tone
-    play_sound.export("morse_code.wav", format='wav')
+    play_sound.export("sounds/morse_code.wav", format='wav')

@@ -20,6 +20,7 @@
 
         TextInput:
             id: string_morsify
+            disabled: proceed_button.disabled
             size_hint: .75, .1
             pos_hint: {"center_x": .4, "center_y": .75}
 
@@ -44,12 +45,13 @@
             font_size: self.width/4
             halign: "center"
             valign: "middle"
-            on_release: string_morsify.text = ""; morse_label.text = "";  copy_morse.disabled = True; loop_checkbox.state = "normal"
+            on_release: string_morsify.text = ""; morse_label.text = "";  copy_morse.disabled = True; app.root.delete_wav_file(); loop_checkbox.state = "normal"
             size_hint: .1, .1
             pos_hint: {"center_x": .935, "center_y": .75}
 
         Label:
             id: morse_label
+            color: 0, 0, 0, 1
             font_size: 72
             text_size: self.size
             bold: True
@@ -68,7 +70,7 @@
             id: loop_checkbox
             text: "Loop"
             disabled: False if morse_label.text != "" or proceed_button.disabled == True else True
-            on_active: app.root.string = string_morsify.text.upper(); app.root.translate_to_morse(); app.root.loop = True; morse_label.text = ""; app.root.morse_loop()
+            on_active: app.root.string = app.root.clipboard; app.root.loop = True; morse_label.text = ""; app.root.morse_loop()
             pos_hint: {"center_x": .05, "center_y": .625}
             size_hint: .02, .025
             canvas.before:
@@ -86,7 +88,7 @@
             disabled: True
             halign: "center"
             valign: "middle"
-            on_release: Clipboard.copy(app.root.string)
+            on_release: Clipboard.copy(app.root.clipboard)
             size_hint: .1, .1
             pos_hint: {"center_x": .9125, "center_y": .1}
 
