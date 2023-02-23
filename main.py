@@ -12,8 +12,9 @@ from kivy.uix.popup import Popup
 
 import morse_code_sound as ms
 
-os.environ['KIVY_GL_BACKEND'] = 'angle_sdl2'  # Enable to prevent OpenGL error
+# os.environ['KIVY_GL_BACKEND'] = 'angle_sdl2' # Enable to prevent OpenGL error
 root_widget = Builder.load_file('app.kv')
+os.environ["KIVY_AUDIO"] = "audio_sdl2"
 
 MORSE_CODE_DICT = {'A': ' .- ', 'B': ' -... ',
                    'C': ' -.-. ', 'D': ' -.. ', 'E': ' . ',
@@ -36,6 +37,7 @@ MORSE_CODE_DICT = {'A': ' .- ', 'B': ' -... ',
 
 class MainWidget(Widget):
     string = ObjectProperty()
+    clipboard = ObjectProperty()
     loop = BooleanProperty(False)
     sound = BooleanProperty(True)
     savefile = ObjectProperty(None)
@@ -44,7 +46,7 @@ class MainWidget(Widget):
     def __init__(self, **kwargs):
         super(MainWidget, self).__init__(**kwargs)
         self.typewriter = Clock.create_trigger(self.type_morse, .1)
-        self.morse_loop = Clock.create_trigger(self.repeat, .25)
+        self.morse_loop = Clock.create_trigger(self.repeat, .1)
 
     def translate_to_morse(self):
 
@@ -56,6 +58,7 @@ class MainWidget(Widget):
 
         self.string = self.string.replace("+", "/")
         self.string += " "
+        self.clipboard = self.string  # Make sure that copy_morse copies the correct string
         ms.create_wav_file(self.string)
         self.morse_sound = SoundLoader.load('sounds/morse_code.wav')
         self.morse_sound.play()
@@ -69,20 +72,19 @@ class MainWidget(Widget):
             self.typewriter()
 
     def repeat(self, dt):
-        if self.ids.string_morsify.text != "":
-            if self.loop:
-                self.ids.morse_label.text += self.string[0]
-                self.string = self.string[1:]
-                if len(self.string) > 0:
-                    self.morse_loop()
-                elif len(self.string) == 0:
-                    if self.ids.loop_checkbox.active:
+        if self.loop:
+            self.ids.morse_label.text += self.string[0]
+            self.string = self.string[1:]
+            if len(self.string) > 0:
+                self.morse_loop()
+            elif len(self.string) == 0:
+                if self.ids.loop_checkbox.active:
 
-                        self.string = self.ids.string_morsify.text + " "
+                        self.string = self.clipboard
                         self.ids.morse_label.text = ""
                         self.morse_loop()
-                    else:
-                        pass
+                else:
+                    pass
 
     def mute_sound(self):
         if self.sound == True:
