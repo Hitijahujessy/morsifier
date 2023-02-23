@@ -85,17 +85,6 @@ class MainWidget(Widget):
                 else:
                     pass
 
-    def reset(self):
-        try:
-            self.typewriter.cancel()
-        except Exception as e:
-            return e
-            
-        try:
-            self.morse_loop.cancel()
-        except Exception as e:
-            return e
-
     def mute_sound(self):
         if self.sound == True:
             self.sound = False
