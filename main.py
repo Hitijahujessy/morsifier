@@ -1,4 +1,5 @@
 import os
+import shutil
 
 import kivy
 from kivy.app import App
@@ -7,6 +8,7 @@ from kivy.core.audio import Sound, SoundLoader
 from kivy.lang import Builder
 from kivy.properties import BooleanProperty, ObjectProperty
 from kivy.uix.widget import Widget
+from kivy.uix.popup import Popup
 
 import morse_code_sound as ms
 
@@ -40,7 +42,9 @@ class MainWidget(Widget):
     string = ObjectProperty()
     clipboard = ObjectProperty()
     loop = BooleanProperty(False)
-    sound = True
+    sound = BooleanProperty(True)
+    savefile = ObjectProperty(None)
+    morse_sound = ObjectProperty(None)
 
     def __init__(self, **kwargs):
         super(MainWidget, self).__init__(**kwargs)
@@ -60,8 +64,9 @@ class MainWidget(Widget):
         self.clipboard = self.string  # Make sure that copy_morse copies the correct string
         ms.create_wav_file(self.string)
         self.morse_sound = SoundLoader.load('sounds/morse_code.wav')
-        if self.sound:
-            self.morse_sound.play()
+        self.morse_sound.play()
+        if self.sound == False:
+            self.morse_sound.volume = 0
 
     def type_morse(self, dt):
         #if self.ids.reset_button
@@ -89,24 +94,43 @@ class MainWidget(Widget):
         if self.sound == True:
             self.sound = False
             try:
-                self.morse_sound.stop()
+                self.morse_sound.volume = 0
             except AttributeError:
-                pass
+                print("self.morse_sound doesnt exist")
         else:
             self.sound = True
             try:
-                self.morse_sound.play()
+                self.morse_sound.volume = 1
             except AttributeError:
-                pass
+                print("self.morse_sound doesnt exist")
 
-    def delete_wav_file(self):
-        f = "sounds/morse_code.wav"
+    def delete_file(self, f="sounds/morse_code.wav"):
         if os.path.exists(f):
             os.remove(f)
         else:
             print("failed to delete: ", f)
+    
+    def dismiss_popup(self):
+        self._popup.dismiss()
+
+    def show_save(self):
+        content = SaveDialog(save=self.save, cancel=self.dismiss_popup)
+        self._popup = Popup(title="Save file", content=content,
+                            size_hint=(0.9, 0.9))
+        self._popup.open()
+        
+    def save(self, path, filename):
+        src_dir = "sounds/morse_code.wav"
+        dst_dir = path + "//" + filename + ".wav"
+        shutil.copy(src_dir, dst_dir)
+
+        self.dismiss_popup()
 
 
+class SaveDialog(Widget):
+    save = ObjectProperty()
+    text_input = ObjectProperty()
+    cancel = ObjectProperty()
 class MorsifierApp(App):
     MainWidget = MainWidget()
 

@@ -47,7 +47,7 @@
             halign: "center"
             valign: "middle"
             on_press: app.root.typewriter.cancel(); app.root.morse_loop.cancel()
-            on_release: string_morsify.text = ""; morse_label.text = "";  copy_morse.disabled = True; app.root.delete_wav_file(); loop_checkbox.state = "normal"
+            on_release: string_morsify.text = ""; morse_label.text = "";  copy_morse.disabled = True; app.root.delete_file(); loop_checkbox.state = "normal"
             size_hint: .1, .1
             pos_hint: {"center_x": .935, "center_y": .75}
 
@@ -102,15 +102,52 @@
 
         ToggleButton:
             id: mute_sound
-            text: "Mute"
+            text: {'normal': "Mute", 'down': "Unmute"} [self.state]
             text_size: self.size
             font_size: self.width/4
             disabled: False
             halign: "center"
             valign: "middle"
             on_release: app.root.mute_sound(); 
-            on_state: self.background_color = (1.0, 0.0, 0.0, 1.0)
-            active: True
-            background_color: (0.0, 1.0, 0.0, 1.0)
+            background_color: {'normal': (0,1,0,1), 'down': (1,0,0,1)} [self.state]
             size_hint: .1, .1
             pos_hint: {"center_x": .8125, "center_y": .1}
+
+        Button:
+            id: download_morse
+            text: "Download"
+            text_size: self.size
+            font_size: self.width/5
+            disabled: False if morse_label.text != "" else True
+            halign: "center"
+            valign: "middle"
+            on_release: app.root.show_save()
+            size_hint: .11, .1
+            pos_hint: {"center_x": .1125, "center_y": .1}
+
+<SaveDialog>:
+    text_input: text_input
+    BoxLayout:
+        size: root.size
+        pos: root.pos
+        orientation: "vertical"
+        FileChooserListView:
+            id: filechooser
+            on_selection: text_input.text = self.selection and self.selection[0] or ''
+
+        TextInput:
+            id: text_input
+            size_hint_y: None
+            height: 30
+            multiline: False
+
+        BoxLayout:
+            size_hint_y: None
+            height: 30
+            Button:
+                text: "Cancel"
+                on_release: root.cancel()
+
+            Button:
+                text: "Save"
+                on_release: root.save(filechooser.path, text_input.text)
