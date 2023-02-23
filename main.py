@@ -48,8 +48,8 @@ class MainWidget(Widget):
 
     def __init__(self, **kwargs):
         super(MainWidget, self).__init__(**kwargs)
-        self.typewriter = Clock.create_trigger(self.type_morse, .1)
-        self.morse_loop = Clock.create_trigger(self.repeat, .1)
+        self.typewriter = Clock.create_trigger(self.type_morse, .132)
+        self.morse_loop = Clock.create_trigger(self.repeat, .132)
 
     def translate_to_morse(self):
 
@@ -70,13 +70,32 @@ class MainWidget(Widget):
 
     def type_morse(self, dt):
         #if self.ids.reset_button
+        if self.string[0] == '.':
+            dt = .132
+        elif self.string[0] == '-':
+            dt = .132 * 3
+        if self.string[0] == ' ':
+            dt = .132 * 3
+        if self.string[0] == '/':
+            dt = .132 * 7
+
         self.ids.morse_label.text += self.string[0]
         self.string = self.string[1:]
         if len(self.string) > 0:
             self.typewriter()
 
     def repeat(self, dt):
+        self.typewriter.cancel()
         if self.loop:
+            if self.string[0] == '.':
+                dt = .132
+            elif self.string[0] == '-':
+                dt = .132 * 3
+            if self.string[0] == ' ':
+                dt = .132 * 3
+            if self.string[0] == '/':
+                dt = .132 * 7
+        
             self.ids.morse_label.text += self.string[0]
             self.string = self.string[1:]
             if len(self.string) > 0:

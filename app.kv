@@ -35,7 +35,7 @@
             halign: "center"
             valign: "middle"
             on_press: app.root.string = string_morsify.text.upper(); app.root.translate_to_morse()
-            on_release: app.root.typewriter() if app.root.loop == False else app.root.morse_loop(); copy_morse.disabled = False
+            on_release: app.root.typewriter(); copy_morse.disabled = False
             size_hint: .1, .1
             pos_hint: {"center_x": .83, "center_y": .75}
 
@@ -46,8 +46,8 @@
             font_size: self.width/4
             halign: "center"
             valign: "middle"
-            on_press: app.root.typewriter.cancel(); app.root.morse_loop.cancel()
-            on_release: string_morsify.text = ""; morse_label.text = "";  copy_morse.disabled = True; app.root.delete_file(); loop_checkbox.state = "normal"
+            on_press: app.root.typewriter.cancel(); loop_checkbox.state = "normal"; app.root.morse_loop.cancel()
+            on_release: string_morsify.text = ""; morse_label.text = "";  copy_morse.disabled = True; app.root.delete_file()
             size_hint: .1, .1
             pos_hint: {"center_x": .935, "center_y": .75}
 

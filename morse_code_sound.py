@@ -30,9 +30,9 @@ def output_sound(path, freq, dur):
 
 
 TIME_UNIT = 0.132
-output_sound('sounds/sine320s.wav', 320, TIME_UNIT)
-output_sound('sounds/sine320l.wav', 320, TIME_UNIT * 3)
-output_sound('sounds/sine0.wav', 0, TIME_UNIT)
+output_sound('sounds/sine320s.wav', 320, TIME_UNIT)  # .
+output_sound('sounds/sine320l.wav', 320, TIME_UNIT * 3)  # -
+output_sound('sounds/sine0.wav', 0, TIME_UNIT)  # /
 
 
 def create_wav_file(morse_string):
