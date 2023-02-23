@@ -1,6 +1,7 @@
 #:import Factory kivy.factory.Factory
 #: import WipeTransition kivy.uix.screenmanager.WipeTransition
 #:import Clipboard kivy.core.clipboard.Clipboard
+#:import Clock kivy.clock
 <MorsifierApp>:
     size: root.size
     pos: root.pos
@@ -45,27 +46,34 @@
             font_size: self.width/4
             halign: "center"
             valign: "middle"
+            on_press: app.root.typewriter.cancel(); app.root.morse_loop.cancel()
             on_release: string_morsify.text = ""; morse_label.text = "";  copy_morse.disabled = True; app.root.delete_wav_file(); loop_checkbox.state = "normal"
             size_hint: .1, .1
             pos_hint: {"center_x": .935, "center_y": .75}
 
-        Label:
-            id: morse_label
-            color: 0, 0, 0, 1
-            font_size: 72
-            text_size: self.size
-            bold: True
+        ScrollView:
+            do_scroll_x: False
+            do_scroll_y: True
             size_hint: .95, .4
-            halign: "left"
-            valign: "top"
             pos_hint: {"center_x": .5, "center_y": .375}
-            canvas.after:
+            canvas.before:
                 Color:
                     rgba: 1, 1, 1, .5
                 Rectangle:
                     size: self.size
                     pos: self.pos
 
+            Label:
+                id: morse_label
+                color: 0, 0, 0, 1
+                font_size: 72
+                text_size: self.width, None
+                bold: True
+                size_hint_y: None
+                halign: "left"
+                valign: "top"
+                height: self.texture_size[1]
+                
         CheckBox:
             id: loop_checkbox
             text: "Loop"

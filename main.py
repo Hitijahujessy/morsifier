@@ -28,7 +28,10 @@ MORSE_CODE_DICT = {'A': ' .- ', 'B': ' -... ',
                    '7': ' --... ', '8': ' ---.. ', '9': ' ----. ',
                    '0': ' ----- ', ', ': ' --..-- ', '.': ' .-.-.- ',
                    '?': ' ..--.. ', '/': ' -..-. ', '-': ' -....- ',
-                   '(': ' -.--. ', ')': ' -.--.- '}
+                   '(': ' -.--. ', ')': ' -.--.- ', "'": '.----.',
+                   '"': '.-..-.', '!': '-·-·--'}
+
+REVERSE_MORSE_DICT = {v: k for k, v in MORSE_CODE_DICT.items()}
 
 # threading multiprocessing
 
@@ -61,6 +64,7 @@ class MainWidget(Widget):
             self.morse_sound.play()
 
     def type_morse(self, dt):
+        #if self.ids.reset_button
         self.ids.morse_label.text += self.string[0]
         self.string = self.string[1:]
         if len(self.string) > 0:
@@ -80,6 +84,17 @@ class MainWidget(Widget):
                         self.morse_loop()
                 else:
                     pass
+
+    def reset(self):
+        try:
+            self.typewriter.cancel()
+        except Exception as e:
+            return e
+            
+        try:
+            self.morse_loop.cancel()
+        except Exception as e:
+            return e
 
     def mute_sound(self):
         if self.sound == True:
