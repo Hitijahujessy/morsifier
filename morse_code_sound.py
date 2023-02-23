@@ -1,6 +1,5 @@
 import struct
 import wave
-import os
 
 import numpy as np
 from pydub import AudioSegment
@@ -29,10 +28,12 @@ def output_sound(path, freq, dur):
 
     output_wave(path, frames)
 
+
 TIME_UNIT = 0.1
 output_sound('sounds/sine440s.wav', 440, TIME_UNIT)
 output_sound('sounds/sine440l.wav', 440, TIME_UNIT * 3)
 output_sound('sounds/sine0.wav', 0, TIME_UNIT)
+
 
 def create_wav_file(morse_string):
     play_sound = AudioSegment.from_wav('sounds/sine0.wav')
@@ -52,4 +53,3 @@ def create_wav_file(morse_string):
         tone = AudioSegment.from_wav('sounds/sine0.wav')
         play_sound += tone
     play_sound.export("sounds/morse_code.wav", format='wav')
-
