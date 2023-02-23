@@ -44,7 +44,7 @@
             font_size: self.width/4
             halign: "center"
             valign: "middle"
-            on_release: string_morsify.text = ""; morse_label.text = "";  copy_morse.disabled = True
+            on_release: string_morsify.text = ""; morse_label.text = "";  copy_morse.disabled = True; app.root.delete_wav_file()
             size_hint: .1, .1
             pos_hint: {"center_x": .935, "center_y": .75}
 

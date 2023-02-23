@@ -78,7 +78,7 @@ class MainWidget(Widget):
                         self.morse_loop()
                     else:
                         pass
-    
+
     def mute_sound(self):
         if self.sound == True:
             self.sound = False
@@ -92,7 +92,13 @@ class MainWidget(Widget):
                 self.morse_sound.play()
             except AttributeError:
                 pass
-        
+
+    def delete_wav_file(self):
+        f = "sounds/morse_code.wav"
+        if os.path.exists(f):
+            os.remove(f)
+        else:
+            print("failed to delete: ", f)
 
 
 class MorsifierApp(App):
