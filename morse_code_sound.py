@@ -29,9 +29,9 @@ def output_sound(path, freq, dur):
     output_wave(path, frames)
 
 
-TIME_UNIT = 0.1
-output_sound('sounds/sine440s.wav', 440, TIME_UNIT)
-output_sound('sounds/sine440l.wav', 440, TIME_UNIT * 3)
+TIME_UNIT = 0.132
+output_sound('sounds/sine320s.wav', 320, TIME_UNIT)
+output_sound('sounds/sine320l.wav', 320, TIME_UNIT * 3)
 output_sound('sounds/sine0.wav', 0, TIME_UNIT)
 
 
@@ -39,10 +39,10 @@ def create_wav_file(morse_string):
     play_sound = AudioSegment.from_wav('sounds/sine0.wav')
     for morse in morse_string:
         if morse == '.':
-            tone = AudioSegment.from_wav('sounds/sine440s.wav')
+            tone = AudioSegment.from_wav('sounds/sine320s.wav')
             play_sound += tone
         elif morse == '-':
-            tone = AudioSegment.from_wav('sounds/sine440l.wav')
+            tone = AudioSegment.from_wav('sounds/sine320l.wav')
             play_sound += tone
         elif morse == ' ':
             tone = AudioSegment.from_wav('sounds/sine0.wav')
