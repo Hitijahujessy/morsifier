@@ -6,31 +6,31 @@ from kivy.app import App
 from kivy.clock import Clock
 from kivy.core.audio import Sound, SoundLoader
 from kivy.lang import Builder
-from kivy.properties import BooleanProperty, ObjectProperty
+from kivy.properties import BooleanProperty, ObjectProperty, NumericProperty
 from kivy.uix.widget import Widget
 from kivy.uix.popup import Popup
 
 import morse_code_sound as ms
 
-# os.environ['KIVY_GL_BACKEND'] = 'angle_sdl2' # Enable to prevent OpenGL error
+os.environ['KIVY_GL_BACKEND'] = 'angle_sdl2' # Enable to prevent OpenGL error
 root_widget = Builder.load_file('app.kv')
 os.environ["KIVY_AUDIO"] = "audio_sdl2"
 
-MORSE_CODE_DICT = {'A': ' .- ', 'B': ' -... ',
-                   'C': ' -.-. ', 'D': ' -.. ', 'E': ' . ',
-                   'F': ' ..-. ', 'G': ' --. ', 'H': ' .... ',
-                   'I': ' .. ', 'J': ' .--- ', 'K': ' -.- ',
-                   'L': ' .-.. ', 'M': ' -- ', 'N': ' -. ',
-                   'O': ' --- ', 'P': ' .--. ', 'Q': ' --.- ',
-                   'R': ' .-. ', 'S': ' ... ', 'T': ' - ',
-                   'U': ' ..- ', 'V': ' ...- ', 'W': ' .-- ',
-                   'X': ' -..- ', 'Y': ' -.-- ', 'Z': ' --.. ',
-                   '1': ' .---- ', '2': ' ..--- ', '3': ' ...-- ',
-                   '4': ' ....- ', '5': ' ..... ', '6': ' -.... ',
-                   '7': ' --... ', '8': ' ---.. ', '9': ' ----. ',
-                   '0': ' ----- ', ', ': ' --..-- ', '.': ' .-.-.- ',
-                   '?': ' ..--.. ', '/': ' -..-. ', '-': ' -....- ',
-                   '(': ' -.--. ', ')': ' -.--.- ', "'": '.----.',
+MORSE_CODE_DICT = {'A': '.-', 'B': '-...',
+                   'C': '-.-.', 'D': '-..', 'E': '.',
+                   'F': '..-.', 'G': '--.', 'H': '....',
+                   'I': '..', 'J': '.---', 'K': '-.-',
+                   'L': '.-..', 'M': '--', 'N': '-.',
+                   'O': '---', 'P': '.--.', 'Q': '--.-',
+                   'R': '.-.', 'S': '...', 'T': '-',
+                   'U': '..-', 'V': '...-', 'W': '.--',
+                   'X': '-..-', 'Y': '-.--', 'Z': '--..',
+                   '1': '.----', '2': '..---', '3': '...--',
+                   '4': '....-', '5': '.....', '6': '-....',
+                   '7': '--...', '8': '---..', '9': '----.',
+                   '0': '-----', ', ': '--..--', '.': '.-.-.-',
+                   '?': '..--..', '/': '-..-.', '-': '-....-',
+                   '(': '-.--.', ')': '-.--.-', "'": '.----.',
                    '"': '.-..-.', '!': '-·-·--'}
 
 REVERSE_MORSE_DICT = {v: k for k, v in MORSE_CODE_DICT.items()}
@@ -45,11 +45,12 @@ class MainWidget(Widget):
     sound = BooleanProperty(True)
     savefile = ObjectProperty(None)
     morse_sound = ObjectProperty(None)
+    downtime = NumericProperty(0)
 
     def __init__(self, **kwargs):
         super(MainWidget, self).__init__(**kwargs)
-        self.typewriter = Clock.create_trigger(self.type_morse, .132)
-        self.morse_loop = Clock.create_trigger(self.repeat, .132)
+        self.typewriter = Clock.create_trigger(self.type_morse, self.downtime)
+        self.morse_loop = Clock.create_trigger(self.repeat, self.downtime)
 
     def translate_to_morse(self):
 
@@ -57,9 +58,9 @@ class MainWidget(Widget):
 
         for char in self.string:
             if char in MORSE_CODE_DICT:
-                self.string = self.string.replace(char, MORSE_CODE_DICT[char])
+                self.string = self.string.replace(char, MORSE_CODE_DICT[char] + " ")
 
-        self.string = self.string.replace("+", "/")
+        self.string = self.string.replace(" +", " / ")
         self.string += " "
         self.clipboard = self.string  # Make sure that copy_morse copies the correct string
         ms.create_wav_file(self.string)
@@ -71,43 +72,49 @@ class MainWidget(Widget):
     def type_morse(self, dt):
         #if self.ids.reset_button
         if self.string[0] == '.':
-            dt = .132
+            self.downtime = .132
         elif self.string[0] == '-':
-            dt = .132 * 3
+            self.downtime = .132 * 3
         if self.string[0] == ' ':
-            dt = .132 * 3
+            self.downtime = .132 * 1.5
         if self.string[0] == '/':
-            dt = .132 * 7
+            self.downtime = .132 * 1
 
         self.ids.morse_label.text += self.string[0]
         self.string = self.string[1:]
+        self.typewriter = Clock.create_trigger(self.type_morse, self.downtime)
         if len(self.string) > 0:
             self.typewriter()
 
     def repeat(self, dt):
         self.typewriter.cancel()
+        
         if self.loop:
             if self.string[0] == '.':
-                dt = .132
+                self.downtime = .132
             elif self.string[0] == '-':
-                dt = .132 * 3
+                self.downtime = .132 * 3
             if self.string[0] == ' ':
-                dt = .132 * 3
+                self.downtime = .132 * 1.5
             if self.string[0] == '/':
-                dt = .132 * 7
+                self.downtime = .132 * 1
         
             self.ids.morse_label.text += self.string[0]
             self.string = self.string[1:]
+            self.morse_loop = Clock.create_trigger(self.repeat, self.downtime)
+            self.morse_sound.loop = True
             if len(self.string) > 0:
                 self.morse_loop()
             elif len(self.string) == 0:
                 if self.ids.loop_checkbox.active:
-
+                        self.morse_sound.stop()
+                        self.morse_sound.play()
                         self.string = self.clipboard
                         self.ids.morse_label.text = ""
                         self.morse_loop()
                 else:
                     pass
+            
 
     def mute_sound(self):
         if self.sound == True:
