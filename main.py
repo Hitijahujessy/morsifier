@@ -12,7 +12,7 @@ from kivy.uix.popup import Popup
 
 import morse_code_sound as ms
 
-os.environ['KIVY_GL_BACKEND'] = 'angle_sdl2' # Enable to prevent OpenGL error
+# os.environ['KIVY_GL_BACKEND'] = 'angle_sdl2' # Enable to prevent OpenGL error
 root_widget = Builder.load_file('app.kv')
 os.environ["KIVY_AUDIO"] = "audio_sdl2"
 
@@ -99,7 +99,11 @@ class MainWidget(Widget):
             if self.string[0] == '/':
                 self.downtime = .132 * 1
         
-            self.ids.morse_label.text += self.string[0]
+            self.ids.loop_label.text = self.ids.loop_label.text.replace("[color=ff0000]", "")
+            self.ids.loop_label.text = self.ids.loop_label.text.replace("[/color]", "")
+            
+            self.ids.loop_label.text += "[color=ff0000]" + self.string[0] + "[/color]"
+
             self.string = self.string[1:]
             self.morse_loop = Clock.create_trigger(self.repeat, self.downtime)
             self.morse_sound.loop = True
@@ -109,8 +113,8 @@ class MainWidget(Widget):
                 if self.ids.loop_checkbox.active:
                         self.morse_sound.stop()
                         self.morse_sound.play()
+                        self.ids.loop_label.text = ""
                         self.string = self.clipboard
-                        self.ids.morse_label.text = ""
                         self.morse_loop()
                 else:
                     pass

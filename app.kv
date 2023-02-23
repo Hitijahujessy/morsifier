@@ -47,7 +47,7 @@
             halign: "center"
             valign: "middle"
             on_press: app.root.typewriter.cancel(); loop_checkbox.state = "normal"; app.root.morse_loop.cancel()
-            on_release: string_morsify.text = ""; morse_label.text = "";  copy_morse.disabled = True; app.root.delete_file()
+            on_release: string_morsify.text = ""; morse_label.text = ""; loop_label.text = "";  copy_morse.disabled = True; app.root.delete_file()
             size_hint: .1, .1
             pos_hint: {"center_x": .935, "center_y": .75}
 
@@ -63,22 +63,37 @@
                     size: self.size
                     pos: self.pos
 
-            Label:
-                id: morse_label
-                color: 0, 0, 0, 1
-                font_size: 72
-                text_size: self.width, None
-                bold: True
+            FloatLayout:
+                pos: root.pos
+                size: self.size
                 size_hint_y: None
-                halign: "left"
-                valign: "top"
-                height: self.texture_size[1]
+                Label:
+                    id: morse_label
+                    markup: True
+                    color: 0, 0, 0, 1
+                    font_size: 72
+                    text_size: self.width, None
+                    bold: True
+                    halign: "left"
+                    valign: "top"
+                    height: self.texture_size[1]
+                    
+                Label:
+                    id: loop_label
+                    markup: True
+                    color: 0, 0, 0, 1
+                    font_size: 72
+                    text_size: self.width, None
+                    bold: True
+                    halign: "left"
+                    valign: "top"
+                    height: self.texture_size[1]
                 
         CheckBox:
             id: loop_checkbox
             text: "Loop"
             disabled: False if morse_label.text != "" or proceed_button.disabled == True else True
-            on_active: app.root.string = app.root.clipboard; app.root.loop = True; morse_label.text = ""; app.root.morse_loop()
+            on_active: app.root.string = app.root.clipboard; app.root.loop = True; morse_label.text = app.root.string; app.root.morse_loop()
             pos_hint: {"center_x": .05, "center_y": .625}
             size_hint: .02, .025
             canvas.before:
