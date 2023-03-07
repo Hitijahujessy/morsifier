@@ -85,6 +85,8 @@ class MainWidget(Widget):
 
     def repeat(self, dt):
         self.typewriter.cancel()
+        if self.morse_sound.state == "stop":
+            self.play_sound(restart=True)
 
         if self.loop:
             if self.string[0] == '.':
@@ -95,7 +97,6 @@ class MainWidget(Widget):
                 self.downtime = .132 * 2
             if self.string[0] == '/':
                 self.downtime = .132 * 1
-            
 
             self.ids.loop_label.text = self.ids.loop_label.text.replace(
                 "[color=ff0000]", "")
@@ -109,13 +110,10 @@ class MainWidget(Widget):
             if len(self.string) == 0:
                 self.downtime = 1
             self.morse_loop = Clock.create_trigger(self.repeat, self.downtime)
-            self.morse_sound.loop = True
             if len(self.string) > 0:
                 self.morse_loop()
             elif len(self.string) == 0:
                 if self.ids.loop_toggle.state == "down":
-                    self.morse_sound.stop()
-                    self.morse_sound.play()
                     self.ids.loop_label.text = ""
                     self.string = self.clipboard
                     self.morse_loop()
@@ -128,26 +126,29 @@ class MainWidget(Widget):
         check = self.ids.loop_toggle
         if check.state == "normal":
             self.loop = False
+            self.ids.loop_label.text = ""  # remove highlight when you stop looping
+            self.morse_sound.stop()
         elif check.state == "down":
             self.string = self.clipboard
             self.loop = True
             self.ids.morse_label.text = self.string
             self.ids.loop_label.text = ""
             self.morse_loop()
-            self.play_sound()
 
-    def play_sound(self):
+    def play_sound(self, restart=False):
         self.morse_sound = SoundLoader.load('sounds/morse_code.wav')
-        self.morse_sound.play()
-        if self.sound == False:
-            self.morse_sound.volume = 0
+        if restart:
+            self.morse_sound.stop()
+        if self.morse_sound.state != "play":
+            self.morse_sound.play()
 
-        if self.loop:
-            if self.morse_sound.on_stop():
-                self.play_sound()
+        if self.sound is False:
+            self.morse_sound.volume = 0
+        else:
+            self.morse_sound.volume = 1
 
     def mute_sound(self):
-        if self.sound == True:
+        if self.sound is True:
             self.sound = False
             try:
                 self.morse_sound.volume = 0
