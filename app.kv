@@ -44,6 +44,7 @@
             id: proceed_button
             text: "Proceed"
             disabled: True if len(morse_label.text) > 0 or loop_toggle.state == "down" else False
+            disabled: True if len(morse_label.text) > 0 or loop_toggle.state == "down" else False
             text_size: self.size
             font_size: self.width/4
             halign: "center"

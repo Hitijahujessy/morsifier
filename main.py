@@ -12,7 +12,7 @@ from kivy.uix.popup import Popup
 
 import morse_code_sound as ms
 
-# os.environ['KIVY_GL_BACKEND'] = 'angle_sdl2' # Enable to prevent OpenGL error
+os.environ['KIVY_GL_BACKEND'] = 'angle_sdl2'  # Enable to prevent OpenGL error
 root_widget = Builder.load_file('app.kv')
 os.environ["KIVY_AUDIO"] = "audio_sdl2"
 
@@ -62,7 +62,6 @@ class MainWidget(Widget):
                     char, MORSE_CODE_DICT[char] + " ")
 
         self.string = self.string.replace(" +", " / ")
-        self.string += " "
         self.clipboard = self.string  # Make sure that copy_morse copies the correct string
         ms.create_wav_file(self.string)
         self.play_sound()
@@ -86,6 +85,8 @@ class MainWidget(Widget):
 
     def repeat(self, dt):
         self.typewriter.cancel()
+        if self.morse_sound.state == "stop":
+            self.play_sound(restart=True)
 
         if self.loop:
             if self.string[0] == '.':
@@ -96,41 +97,58 @@ class MainWidget(Widget):
                 self.downtime = .132 * 2
             if self.string[0] == '/':
                 self.downtime = .132 * 1
-        
-            self.ids.loop_label.text = self.ids.loop_label.text.replace("[color=ff0000]", "")
-            self.ids.loop_label.text = self.ids.loop_label.text.replace("[/color]", "")
-            
-            self.ids.loop_label.text += "[color=ff0000]" + self.string[0] + "[/color]"
+
+            self.ids.loop_label.text = self.ids.loop_label.text.replace(
+                "[color=ff0000]", "")
+            self.ids.loop_label.text = self.ids.loop_label.text.replace(
+                "[/color]", "")
+
+            self.ids.loop_label.text += "[color=ff0000]" + \
+                self.string[0] + "[/color]"
 
             self.string = self.string[1:]
+            if len(self.string) == 0:
+                self.downtime = 1
             self.morse_loop = Clock.create_trigger(self.repeat, self.downtime)
-            self.morse_sound.loop = True
             if len(self.string) > 0:
                 self.morse_loop()
             elif len(self.string) == 0:
                 if self.ids.loop_toggle.state == "down":
-                        self.morse_sound.stop()
-                        self.morse_sound.play()
-                        self.ids.loop_label.text = ""
-                        self.string = self.clipboard
-                        self.morse_loop()
+                    self.ids.loop_label.text = ""
+                    self.string = self.clipboard
+                    self.morse_loop()
                 else:
                     self.loop = False
                     # self.ids.loop_label.text = self.clipboard
-                    # self.ids.morse_label.text = self.clipboard  
+                    # self.ids.morse_label.text = self.clipboard
 
-    def play_sound(self):
+    def loop_toggle(self):
+        check = self.ids.loop_toggle
+        if check.state == "normal":
+            self.loop = False
+            self.ids.loop_label.text = ""  # remove highlight when you stop looping
+            self.morse_sound.stop()
+        elif check.state == "down":
+            self.string = self.clipboard
+            self.loop = True
+            self.ids.morse_label.text = self.string
+            self.ids.loop_label.text = ""
+            self.morse_loop()
+
+    def play_sound(self, restart=False):
         self.morse_sound = SoundLoader.load('sounds/morse_code.wav')
-        self.morse_sound.play()
-        if self.sound == False:
-            self.morse_sound.volume = 0
+        if restart:
+            self.morse_sound.stop()
+        if self.morse_sound.state != "play":
+            self.morse_sound.play()
 
-        if self.loop:
-            if self.morse_sound.on_stop():
-                self.play_sound()
+        if self.sound is False:
+            self.morse_sound.volume = 0
+        else:
+            self.morse_sound.volume = 1
 
     def mute_sound(self):
-        if self.sound == True:
+        if self.sound is True:
             self.sound = False
             try:
                 self.morse_sound.volume = 0
