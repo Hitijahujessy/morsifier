@@ -46,7 +46,7 @@
             font_size: self.width/4
             halign: "center"
             valign: "middle"
-            on_press: app.root.typewriter.cancel(); loop_checkbox.state = "normal"; app.root.morse_loop.cancel()
+            on_press: app.root.typewriter.cancel(); loop_toggle.state = "normal"; app.root.morse_loop.cancel()
             on_release: string_morsify.text = ""; morse_label.text = ""; loop_label.text = "";  copy_morse.disabled = True; app.root.delete_file()
             size_hint: .1, .1
             pos_hint: {"center_x": .935, "center_y": .75}
@@ -89,11 +89,17 @@
                     valign: "top"
                     height: self.texture_size[1]
                 
-        CheckBox:
-            id: loop_checkbox
+        ToggleButton:
+            id: loop_toggle
             text: "Loop"
             disabled: False if morse_label.text != "" or proceed_button.disabled == True else True
-            on_active: app.root.string = app.root.clipboard; app.root.loop = True; morse_label.text = ""; app.root.morse_loop(); app.root.play_sound()
+            on_press: 
+                app.root.string = app.root.clipboard; 
+                app.root.loop = True; 
+                morse_label.text = app.root.string; 
+                loop_label.text = app.root.string; 
+                app.root.morse_loop(); 
+                app.root.play_sound()
             pos_hint: {"center_x": .05, "center_y": .625}
             size_hint: .02, .025
             canvas.before:

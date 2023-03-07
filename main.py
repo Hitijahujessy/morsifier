@@ -108,7 +108,7 @@ class MainWidget(Widget):
             if len(self.string) > 0:
                 self.morse_loop()
             elif len(self.string) == 0:
-                if self.ids.loop_checkbox.active:
+                if self.ids.loop_toggle.state == "down":
                         self.morse_sound.stop()
                         self.morse_sound.play()
                         self.ids.loop_label.text = ""
@@ -116,6 +116,8 @@ class MainWidget(Widget):
                         self.morse_loop()
                 else:
                     self.loop = False
+                    # self.ids.loop_label.text = self.clipboard
+                    # self.ids.morse_label.text = self.clipboard  
 
     def play_sound(self):
         self.morse_sound = SoundLoader.load('sounds/morse_code.wav')
