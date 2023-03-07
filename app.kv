@@ -93,7 +93,7 @@
             id: loop_checkbox
             text: "Loop"
             disabled: False if morse_label.text != "" or proceed_button.disabled == True else True
-            on_active: app.root.string = app.root.clipboard; app.root.loop = True; morse_label.text = app.root.string; app.root.morse_loop()
+            on_active: app.root.string = app.root.clipboard; app.root.loop = True; morse_label.text = ""; app.root.morse_loop(); app.root.play_sound()
             pos_hint: {"center_x": .05, "center_y": .625}
             size_hint: .02, .025
             canvas.before:

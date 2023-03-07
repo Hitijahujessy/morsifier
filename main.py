@@ -58,25 +58,23 @@ class MainWidget(Widget):
 
         for char in self.string:
             if char in MORSE_CODE_DICT:
-                self.string = self.string.replace(char, MORSE_CODE_DICT[char] + " ")
+                self.string = self.string.replace(
+                    char, MORSE_CODE_DICT[char] + " ")
 
         self.string = self.string.replace(" +", " / ")
         self.string += " "
         self.clipboard = self.string  # Make sure that copy_morse copies the correct string
         ms.create_wav_file(self.string)
-        self.morse_sound = SoundLoader.load('sounds/morse_code.wav')
-        self.morse_sound.play()
-        if self.sound == False:
-            self.morse_sound.volume = 0
+        self.play_sound()
 
     def type_morse(self, dt):
-        #if self.ids.reset_button
+        # if self.ids.reset_button
         if self.string[0] == '.':
             self.downtime = .132
         elif self.string[0] == '-':
-            self.downtime = .132 * 3
+            self.downtime = .132 * 2
         if self.string[0] == ' ':
-            self.downtime = .132 * 1.5
+            self.downtime = .132 * 2
         if self.string[0] == '/':
             self.downtime = .132 * 1
 
@@ -88,14 +86,14 @@ class MainWidget(Widget):
 
     def repeat(self, dt):
         self.typewriter.cancel()
-        
+
         if self.loop:
             if self.string[0] == '.':
                 self.downtime = .132
             elif self.string[0] == '-':
-                self.downtime = .132 * 3
+                self.downtime = .132 * 2
             if self.string[0] == ' ':
-                self.downtime = .132 * 1.5
+                self.downtime = .132 * 2
             if self.string[0] == '/':
                 self.downtime = .132 * 1
         
@@ -117,8 +115,17 @@ class MainWidget(Widget):
                         self.string = self.clipboard
                         self.morse_loop()
                 else:
-                    pass
-            
+                    self.loop = False
+
+    def play_sound(self):
+        self.morse_sound = SoundLoader.load('sounds/morse_code.wav')
+        self.morse_sound.play()
+        if self.sound == False:
+            self.morse_sound.volume = 0
+
+        if self.loop:
+            if self.morse_sound.on_stop():
+                self.play_sound()
 
     def mute_sound(self):
         if self.sound == True:
@@ -139,7 +146,7 @@ class MainWidget(Widget):
             os.remove(f)
         else:
             print("failed to delete: ", f)
-    
+
     def dismiss_popup(self):
         self._popup.dismiss()
 
@@ -148,7 +155,7 @@ class MainWidget(Widget):
         self._popup = Popup(title="Save file", content=content,
                             size_hint=(0.9, 0.9))
         self._popup.open()
-        
+
     def save(self, path, filename):
         src_dir = "sounds/morse_code.wav"
         dst_dir = path + "//" + filename + ".wav"
@@ -161,6 +168,8 @@ class SaveDialog(Widget):
     save = ObjectProperty()
     text_input = ObjectProperty()
     cancel = ObjectProperty()
+
+
 class MorsifierApp(App):
     MainWidget = MainWidget()
 
