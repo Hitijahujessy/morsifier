@@ -29,7 +29,7 @@
         Button:
             id: proceed_button
             text: "Proceed"
-            disabled: True if len(morse_label.text) > 0 or loop_checkbox.state == "down" else False
+            disabled: True if len(morse_label.text) > 0 or loop_toggle.state == "down" else False
             text_size: self.size
             font_size: self.width/4
             halign: "center"
@@ -94,12 +94,7 @@
             text: "Loop"
             disabled: False if morse_label.text != "" or proceed_button.disabled == True else True
             on_press: 
-                app.root.string = app.root.clipboard; 
-                app.root.loop = True; 
-                morse_label.text = app.root.string; 
-                loop_label.text = app.root.string; 
-                app.root.morse_loop(); 
-                app.root.play_sound()
+                app.root.loop_toggle()
             pos_hint: {"center_x": .05, "center_y": .625}
             size_hint: .02, .025
             canvas.before:
