@@ -64,17 +64,17 @@ class MainWidget(Widget):
         self.string = self.string.replace(" +", " / ")
         self.clipboard = self.string  # Make sure that copy_morse copies the correct string
         ms.create_wav_file(self.string)
+        self.morse_sound = SoundLoader.load('sounds/morse_code.wav')
         self.play_sound()
 
     def type_morse(self, dt):
-        # if self.ids.reset_button
         if self.string[0] == '.':
             self.downtime = .132
         elif self.string[0] == '-':
             self.downtime = .132 * 2
-        if self.string[0] == ' ':
+        elif self.string[0] == ' ':
             self.downtime = .132 * 2
-        if self.string[0] == '/':
+        elif self.string[0] == '/':
             self.downtime = .132 * 1
 
         self.ids.morse_label.text += self.string[0]
@@ -85,10 +85,11 @@ class MainWidget(Widget):
 
     def repeat(self, dt):
         self.typewriter.cancel()
-        if self.morse_sound.state == "stop":
-            self.play_sound(restart=True)
 
         if self.loop:
+            if self.morse_sound.state == "stop":
+                self.play_sound(restart=True)
+            
             if self.string[0] == '.':
                 self.downtime = .132
             elif self.string[0] == '-':
@@ -97,7 +98,9 @@ class MainWidget(Widget):
                 self.downtime = .132 * 2
             if self.string[0] == '/':
                 self.downtime = .132 * 1
-
+                
+            self.ids.morse_label.text = self.clipboard
+            
             self.ids.loop_label.text = self.ids.loop_label.text.replace(
                 "[color=ff0000]", "")
             self.ids.loop_label.text = self.ids.loop_label.text.replace(
@@ -117,26 +120,33 @@ class MainWidget(Widget):
                     self.ids.loop_label.text = ""
                     self.string = self.clipboard
                     self.morse_loop()
-                else:
-                    self.loop = False
-                    # self.ids.loop_label.text = self.clipboard
-                    # self.ids.morse_label.text = self.clipboard
 
     def loop_toggle(self):
         check = self.ids.loop_toggle
+        
         if check.state == "normal":
             self.loop = False
             self.ids.loop_label.text = ""  # remove highlight when you stop looping
-            self.morse_sound.stop()
+            try:
+                self.morse_sound.stop()
+            except AttributeError:
+                pass
         elif check.state == "down":
-            self.string = self.clipboard
+            
             self.loop = True
-            self.ids.morse_label.text = self.string
-            self.ids.loop_label.text = ""
+            if self.clipboard:
+                self.string = self.clipboard
+                self.ids.morse_label.text = self.string
+                self.ids.loop_label.text = ""
+                self.morse_loop()
+    
+    def do_proceed(self):
+        if not self.loop:
+            self.typewriter()
+        else:
             self.morse_loop()
 
     def play_sound(self, restart=False):
-        self.morse_sound = SoundLoader.load('sounds/morse_code.wav')
         if restart:
             self.morse_sound.stop()
         if self.morse_sound.state != "play":
@@ -164,6 +174,7 @@ class MainWidget(Widget):
     def delete_file(self, f="sounds/morse_code.wav"):
         if os.path.exists(f):
             os.remove(f)
+            self.morse_sound.unload()
         else:
             print("failed to delete: ", f)
 
