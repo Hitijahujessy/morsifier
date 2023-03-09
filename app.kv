@@ -26,7 +26,7 @@
 
         TextInput:
             id: string_morsify
-            disabled: proceed_button.disabled
+            disabled: True if len(morse_label.text) > 0 else False
             size_hint: .75, .1
             pos_hint: {"center_x": .4, "center_y": .75}
             #color: 0, 0, 0, 1
@@ -37,13 +37,11 @@
                 RoundedRectangle:
                     size: self.size
                     pos: self.pos
-                
-
 
         Button:
             id: proceed_button
             text: "Proceed"
-            disabled: True if len(morse_label.text) > 0 else False
+            disabled: True if len(morse_label.text) > 0 or len(string_morsify.text) == 0 else False
             text_size: self.size
             font_size: self.width/4
             halign: "center"
@@ -68,7 +66,7 @@
             halign: "center"
             valign: "middle"
             on_press: app.root.typewriter.cancel(); app.root.morse_loop.cancel()
-            on_release: string_morsify.text = ""; morse_label.text = ""; loop_label.text = "";  copy_morse.disabled = True; app.root.delete_file(); app.root.clipboard = ''
+            on_release: string_morsify.text = ""; morse_label.text = "";  copy_morse.disabled = True; app.root.delete_file(); app.root.clipboard = ''
             size_hint: .1, .1
             pos_hint: {"center_x": .935, "center_y": .75}
             background_color: 0, 0, 0, 0
@@ -81,49 +79,43 @@
 
 
         ScrollView:
+            id: scroll_view
             do_scroll_x: False
             do_scroll_y: True
             size_hint: .95, .4
             pos_hint: {"center_x": .5, "center_y": .375}
+            # effect_cls: "ScrollEffect" # to disable "bouncing"
             canvas.before:
                 Color:
-                    rgba: 1, 1, 1, .5
+                    rgba: 1, 1, 1, 0.5
                 RoundedRectangle:
                     size: self.size
                     pos: self.pos
 
-            FloatLayout:
+            GridLayout:
+                id: scroll_layout
+                cols: 1
                 pos: root.pos
-                size: self.size
+                height: self.minimum_height
                 size_hint_y: None
+
                 Label:
                     id: morse_label
                     markup: True
                     color: 0, 0, 0, 1
                     font_size: 72
                     text_size: self.width, None
-                    bold: True
-                    halign: "left"
                     valign: "top"
-                    height: self.texture_size[1]
-                    
-                    
-                Label:
-                    id: loop_label
-                    markup: True
-                    color: 0, 0, 0, 1
-                    font_size: 72
-                    text_size: self.width, None
-                    bold: True
                     halign: "left"
-                    valign: "top"
+                    bold: True
+                    size_hint: self.width, None
                     height: self.texture_size[1]
-                
+
         ToggleButton:
             id: loop_toggle
             text: "Loop"
             disabled: False
-            on_press: 
+            on_press:
                 app.root.loop_toggle()
             pos_hint: {"center_x": .0775, "center_y": .625}
             size_hint: .1, .05
@@ -164,7 +156,7 @@
             disabled: False
             halign: "center"
             valign: "middle"
-            on_release: app.root.mute_sound(); 
+            on_release: app.root.mute_sound();
             #background_color: {'normal': (0,1,0,1), 'down': (1,0,0,1)} [self.state]
             size_hint: .1, .1
             pos_hint: {"center_x": .82, "center_y": .1}
