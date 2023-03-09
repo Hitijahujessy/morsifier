@@ -69,14 +69,7 @@ class MainWidget(Widget):
         self.play_sound()
 
     def type_morse(self, dt):
-        if self.string[0] == '.':
-            self.downtime = .132
-        elif self.string[0] == '-':
-            self.downtime = .132 * 2
-        elif self.string[0] == ' ':
-            self.downtime = .132 * 2
-        elif self.string[0] == '/':
-            self.downtime = .132 * 1
+        self.get_downtime()
 
         self.ids.morse_label.text += self.string[0]
         self.string = self.string[1:]
@@ -89,15 +82,8 @@ class MainWidget(Widget):
         if self.loop:
             if self.morse_sound.state == "stop":
                 self.play_sound(restart=True)
-                # self.ids.scroll_view.scroll_to(self.ids.morse_label) # Enable to have it scroll to the top when it restarts
-            if self.string[0] == '.':
-                self.downtime = .132
-            elif self.string[0] == '-':
-                self.downtime = .132 * 2
-            if self.string[0] == ' ':
-                self.downtime = .132 * 2
-            if self.string[0] == '/':
-                self.downtime = .132 * 1
+                self.ids.scroll_view.scroll_to(self.ids.morse_label) # Enable to have it scroll to the top when it restarts
+            self.get_downtime()
             
             self.ids.morse_label.text = self.clipboard
             self.highlight()
@@ -112,6 +98,16 @@ class MainWidget(Widget):
                 if self.ids.loop_toggle.state == "down":
                     self.string = self.clipboard
                     self.morse_loop()
+
+    def get_downtime(self):
+        if self.string[0] == '.':
+            self.downtime = .132
+        elif self.string[0] == '-':
+            self.downtime = .132 * 2
+        if self.string[0] == ' ':
+            self.downtime = .132 * 2
+        if self.string[0] == '/':
+            self.downtime = .132 * 1
                     
     def highlight(self):
         index = abs(len(self.string) - len(self.clipboard))
