@@ -1,12 +1,11 @@
 # Morsifier
-A Kivy application to translate text to morsecode.
+A Kivy application to translate text to-, listen to- and download morsecode.
 
 <div align="center">
     <img src="image.png" />
 </div>
 
 ## Description
-An in-depth paragraph about your project and overview of use.
 
 ## Getting Started
 
