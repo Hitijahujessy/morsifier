@@ -30,11 +30,11 @@
             size_hint: .75, .1
             font_size: 32
             pos_hint: {"center_x": .4, "center_y": .75}
-            foreground_color: 1, 1, 1, 1
-            background_color: 0, 0, 0,0 
-            canvas.before:
+            foreground_color: 0, 0, 0, 1
+            background_color: (1, 1, 1, .5)
+            canvas.after:
                 Color:
-                    rgba: (1, 1, 1, .25) if self.focus == True else (1, 1, 1, .5)
+                    rgba: (1, 1, 1, .25) if self.focus == True else (1, 1, 1, .5) #(1, 1, 1, .25) if self.focus == True else (1, 1, 1, .5)
                 RoundedRectangle:
                     size: self.size
                     pos: self.pos
