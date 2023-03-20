@@ -10,7 +10,7 @@
 <MainWidget>
     canvas.before:
         Color:
-            rgb: .9, .8, .55, 1
+            rgba: (.22, .22, .22, 1)
         Rectangle:
             pos: self.pos
             size: self.size
@@ -28,12 +28,13 @@
             id: string_morsify
             disabled: True if len(morse_label.text) > 0 else False
             size_hint: .75, .1
+            font_size: 32
             pos_hint: {"center_x": .4, "center_y": .75}
-            #color: 0, 0, 0, 1
-            background_color: 0, 0, 0, 0
+            foreground_color: 0, 0, 0, 1
+            background_color: (1, 1, 1, .5)
             canvas.after:
                 Color:
-                    rgba: 1, 1, 1, .5
+                    rgba: (1, 1, 1, .25) if self.focus == True else (1, 1, 1, .5) #(1, 1, 1, .25) if self.focus == True else (1, 1, 1, .5)
                 RoundedRectangle:
                     size: self.size
                     pos: self.pos
@@ -53,7 +54,7 @@
             background_color: 0, 0, 0, 0
             canvas.before:
                 Color:
-                    rgba: (.33, .33, .33, 1) if self.state == "normal" else (.22, .22, .22, 1)
+                    rgba: (0, .4, .66, 1) if self.state == "normal" else (0, .2, .46, 1)
                 RoundedRectangle:
                     size: self.size
                     pos: self.pos
@@ -72,7 +73,7 @@
             background_color: 0, 0, 0, 0
             canvas.before:
                 Color:
-                    rgba: (.33, .33, .33, 1) if self.state == "normal" else (.22, .22, .22, 1)
+                    rgba: (0, .4, .66, 1) if self.state == "normal" else (0, .2, .46, 1)
                 RoundedRectangle:
                     size: self.size
                     pos: self.pos
@@ -122,7 +123,7 @@
             background_color: 0, 0, 0, 0
             canvas.before:
                 Color:
-                    rgba: (.33, .33, .33, 1) if self.state == "normal" else (.22, .22, .22, 1)
+                    rgba: (0, .4, .66, 1) if self.state == "normal" else (0, .2, .46, 1)
                 RoundedRectangle:
                     size: self.size
                     pos: self.pos
@@ -142,7 +143,7 @@
             background_color: 0, 0, 0, 0
             canvas.before:
                 Color:
-                    rgba: (.33, .33, .33, 1) if self.state == "normal" else (.22, .22, .22, 1)
+                    rgba: (0, .4, .66, 1) if self.state == "normal" else (0, .2, .46, 1)
                 RoundedRectangle:
                     size: self.size
                     pos: self.pos
@@ -183,7 +184,7 @@
             background_color: 0, 0, 0, 0
             canvas.before:
                 Color:
-                    rgba: (.33, .33, .33, 1) if self.state == "normal" else (.22, .22, .22, 1)
+                    rgba: (0, .4, .66, 1) if self.state == "normal" else (0, .2, .46, 1)
                 RoundedRectangle:
                     size: self.size
                     pos: self.pos
