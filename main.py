@@ -4,7 +4,7 @@ import shutil
 import kivy
 from kivy.app import App
 from kivy.clock import Clock
-from kivy.core.audio import Sound, SoundLoader
+from kivy.core.audio import SoundLoader
 from kivy.lang import Builder
 from kivy.properties import BooleanProperty, NumericProperty, ObjectProperty
 from kivy.uix.popup import Popup
@@ -51,6 +51,7 @@ class MainWidget(Widget):
         super(MainWidget, self).__init__(**kwargs)
         self.typewriter = Clock.create_trigger(self.type_morse, self.downtime)
         self.morse_loop = Clock.create_trigger(self.repeat, self.downtime)
+        self.check_loop = Clock.schedule_once(self.activate_loop, 0)
 
     def translate_to_morse(self):
         self.string = self.string.strip()
@@ -61,6 +62,9 @@ class MainWidget(Widget):
             if char in MORSE_CODE_DICT:
                 self.string = self.string.replace(
                     char, MORSE_CODE_DICT[char] + " ")
+            else:
+                self.string = self.string.replace(
+                    char, " ")
         self.string = self.string.replace(" +", " / ")
         self.string = self.string.replace("+", "")
         self.clipboard = self.string  # Make sure that copy_morse copies the correct string
@@ -80,12 +84,14 @@ class MainWidget(Widget):
     def repeat(self, dt):
         self.typewriter.cancel()
         if self.loop:
-            if self.morse_sound.state == "stop":
-                self.play_sound(restart=True)
-                self.ids.scroll_view.scroll_to(self.ids.morse_label) # Enable to have it scroll to the top when it restarts
+            self.play_sound(restart=True)
+            # Enable 'scroll_to' to have it scroll to the top when it restarts
+            if self.ids.morse_label.text:
+                if self.ids.morse_label.text[0] == "[":
+                    self.ids.scroll_view.scroll_y = 1
             self.get_downtime()
-            
-            self.ids.morse_label.text = self.clipboard
+
+            # self.ids.morse_label.text = self.clipboard
             self.highlight()
             self.string = self.string[1:]
 
@@ -107,14 +113,34 @@ class MainWidget(Widget):
         if self.string[0] == ' ':
             self.downtime = .01#.132 * 2
         if self.string[0] == '/':
+<<<<<<< HEAD
             self.downtime = .01#.132 * 1
                     
+=======
+            self.downtime = .132 * 1
+
+        self.downtime = 0
+
+    def make_text_static(self, loose_text):
+        text = loose_text.replace(" ", "[/b] [b]")
+        static_text = '[b]'+ text + "[/b]"
+        return static_text
+
+>>>>>>> 4cdb47e5a35a339d16d9ff0ba110b944563409fc
     def highlight(self):
+        try:
+            self.ids.morse_label.text = self.ids.morse_label.text.replace(
+                "[color=ff0000]", "")
+            self.ids.morse_label.text = self.ids.morse_label.text.replace(
+                "[/color]", "")
+        except:
+            pass
         index = abs(len(self.string) - len(self.clipboard))
         list1 = list(self.clipboard)
         character = list1[index]
-        list1[index] = "[color=ff0000]" + character + "[/color]"
-        self.ids.morse_label.text = ''.join(list1)
+        list1[index] = "[color=ff0000]"+character+"[/color]"
+        text = self.make_text_static(''.join(list1))
+        self.ids.morse_label.text = text
         return list1
 
     def loop_toggle(self):
@@ -122,17 +148,26 @@ class MainWidget(Widget):
 
         if check.state == "normal":
             self.loop = False
+            self.ids.morse_label.text = self.ids.morse_label.text.replace(
+                "[color=ff0000]", "")
+            self.ids.morse_label.text = self.ids.morse_label.text.replace(
+                "[/color]", "")
             try:
                 self.morse_sound.stop()
             except AttributeError:
                 pass
         elif check.state == "down":
-
             self.loop = True
-            if self.clipboard:
-                self.string = self.clipboard
-                self.ids.morse_label.text = self.string
-                self.morse_loop()
+            self.check_loop()
+
+    def activate_loop(self, dt):
+        """Waits for the full morse string to appear on screen"""
+        if self.ids.morse_label.text != self.clipboard:
+            self.check_loop()
+        elif self.clipboard:
+            self.string = self.clipboard
+            self.ids.morse_label.text = self.string
+            self.morse_loop()
 
     def do_proceed(self):
         if not self.loop:
