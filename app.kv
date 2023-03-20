@@ -16,6 +16,8 @@
     bold: True
     size_hint: self.width, None
     height: self.texture_size[1]
+    max_lines: 1
+    hidden_text: ""
 
 <MainWidget>
     canvas.before:
@@ -58,7 +60,7 @@
             font_size: self.width/4
             halign: "center"
             valign: "middle"
-            on_press: app.root.string = string_morsify.text.upper(); app.root.translate_to_morse()
+            on_press: app.root.text_string = string_morsify.text.upper(); app.root.translate_to_morse()
             on_release: app.root.do_proceed(); copy_morse.disabled = False
             size_hint: .1, .1
             pos_hint: {"center_x": .83, "center_y": .75}
@@ -78,7 +80,7 @@
             halign: "center"
             valign: "middle"
             on_press: app.root.typewriter.cancel(); app.root.morse_loop.cancel()
-            on_release: string_morsify.text = ""; morse_label.text = "";  copy_morse.disabled = True; app.root.delete_file(); app.root.clipboard = ''
+            on_release: string_morsify.text = ""; morse_label.text = "";  copy_morse.disabled = True; app.root.delete_file(); app.root.clipboard = ''; app.root.delete_labels()
             size_hint: .1, .1
             pos_hint: {"center_x": .935, "center_y": .75}
             background_color: 0, 0, 0, 0
@@ -114,17 +116,7 @@
 
                 MorseLabel:
                     id: morse_label
-                # Label:
-                #     id: morse_label
-                #     markup: True
-                #     color: 0, 0, 0, 1
-                #     font_size: 72
-                #     text_size: self.width, None
-                #     valign: "top"
-                #     halign: "left"
-                #     bold: True
-                #     size_hint: self.width, None
-                #     height: self.texture_size[1]
+                    text: "test"
 
         ToggleButton:
             id: loop_toggle
