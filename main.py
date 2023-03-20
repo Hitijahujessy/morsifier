@@ -14,7 +14,7 @@ import morse_code_sound as ms
 
 #os.environ['KIVY_GL_BACKEND'] = 'angle_sdl2'  # Enable to prevent OpenGL error
 root_widget = Builder.load_file('app.kv')
-os.environ["KIVY_AUDIO"] = "audio_sdl2"
+os.environ["KIVY_AUDIO"] = "avplayer"
 
 MORSE_CODE_DICT = {'A': '.-', 'B': '-...',
                    'C': '-.-.', 'D': '-..', 'E': '.',
@@ -28,7 +28,7 @@ MORSE_CODE_DICT = {'A': '.-', 'B': '-...',
                    '1': '.----', '2': '..---', '3': '...--',
                    '4': '....-', '5': '.....', '6': '-....',
                    '7': '--...', '8': '---..', '9': '----.',
-                   '0': '-----', ', ': '--..--', '.': '.-.-.-',
+                   '0': '-----', ',': '--..--', '.': '.-.-.-',
                    '?': '..--..', '/': '-..-.', '-': '-....-',
                    '(': '-.--.', ')': '-.--.-', "'": '.----.',
                    '"': '.-..-.', '!': '-·-·--'}
