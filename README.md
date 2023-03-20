@@ -2,7 +2,7 @@
 A Kivy application to translate text to-, listen to- and download morsecode.
 
 <div align="center">
-    <img width="250px" src="morsifier.png" />
+    <img align="left width="250px" src="morsifier.png" />
 </div>
 
 ## Description
