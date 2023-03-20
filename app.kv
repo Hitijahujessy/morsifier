@@ -6,6 +6,16 @@
     size: root.size
     pos: root.pos
 
+<MorseLabel@Label>:
+    markup: True
+    color: 0, 0, 0, 1
+    font_size: 72
+    text_size: self.width, None
+    valign: "top"
+    halign: "left"
+    bold: True
+    size_hint: self.width, None
+    height: self.texture_size[1]
 
 <MainWidget>
     canvas.before:
@@ -32,6 +42,7 @@
             pos_hint: {"center_x": .4, "center_y": .75}
             foreground_color: 0, 0, 0, 1
             background_color: (1, 1, 1, .5)
+            
             canvas.after:
                 Color:
                     rgba: (1, 1, 1, .25) if self.focus == True else (1, 1, 1, .5) #(1, 1, 1, .25) if self.focus == True else (1, 1, 1, .5)
@@ -100,17 +111,9 @@
                 height: self.minimum_height
                 size_hint_y: None
 
-                Label:
+
+                MorseLabel:
                     id: morse_label
-                    markup: True
-                    color: 0, 0, 0, 1
-                    font_size: 72
-                    text_size: self.width, None
-                    valign: "top"
-                    halign: "left"
-                    bold: True
-                    size_hint: self.width, None
-                    height: self.texture_size[1]
 
         ToggleButton:
             id: loop_toggle

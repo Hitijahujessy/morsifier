@@ -101,13 +101,13 @@ class MainWidget(Widget):
 
     def get_downtime(self):
         if self.string[0] == '.':
-            self.downtime = .132
+            self.downtime = .01#.132
         elif self.string[0] == '-':
-            self.downtime = .132 * 2
+            self.downtime = .01#.132 * 2
         if self.string[0] == ' ':
-            self.downtime = .132 * 2
+            self.downtime = .01#.132 * 2
         if self.string[0] == '/':
-            self.downtime = .132 * 1
+            self.downtime = .01#.132 * 1
                     
     def highlight(self):
         index = abs(len(self.string) - len(self.clipboard))
