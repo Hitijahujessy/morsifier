@@ -70,27 +70,32 @@ class MainWidget(Widget):
 
     def create_labels(self, string_to_label):
         string_list = []
-        words = 3
-        split_string = string_to_label.split("/")
-        lines = len(split_string) / words
-        index = 0
-        endex = words
-        for s in range(len(split_string)):
-            if s != (len(split_string)-1):
-                split_string[s] = split_string[s] + ' /'
-                print(split_string)
+        max_characters = 25
+        lines = 1 + len(string_to_label) // max_characters
+        
         while lines > 0:
+            n = 0
+            line = None
+            while not line:
+                try:
+                    if string_to_label[max_characters+1-n] == " ":
+                        line = string_to_label[:max_characters+1-n]
+                    else:
+                        n+= 1
+                        if n > 6:
+                            print("n shouldnt be higher than 6, n ==: "+ str(n))
+                except IndexError:
+                    line = string_to_label[:]
+            string_to_label = string_to_label[max_characters+1-n:]
+            string_list.append(line)
             lines -= 1
-            string_list.append(split_string[index:endex])
-            index += words
-            endex += words
         
         print(string_list)
 
         for i, string in enumerate(string_list):
             morse_label = Factory.MorseLabel()
             self.ids.scroll_layout.add_widget(morse_label)
-            morse_label.hidden_text = ' '.join(string) + " "
+            morse_label.hidden_text = ''.join(string)
             morse_label.id = "morse" + str(i)
 
     def get_label(self):

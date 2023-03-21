@@ -11,7 +11,7 @@
 <MorseLabel@Label>:
     markup: True
     color: 0, 0, 0, 1
-    font_size: self.width / 15
+    font_size: self.width / 10
     text_size: self.width, None
     valign: "top"
     halign: "left"
@@ -42,7 +42,7 @@
 
         TextInput:
             id: string_morsify
-            disabled: True if len(morse_label.text) > 0 else False
+            disabled: True if len(scroll_layout.children) > 0 else False
             size_hint: .75, .1
             font_size: 48
             pos_hint: {"center_x": .4, "center_y": .75}
@@ -80,7 +80,7 @@
             halign: "center"
             valign: "middle"
             on_press: app.root.typewriter.cancel(); app.root.morse_loop.cancel(); proceed_button.disabled = False
-            on_release: string_morsify.text = ""; morse_label.text = "";  copy_morse.disabled = True; app.root.delete_file(); app.root.clipboard = ''; app.root.delete_labels()
+            on_release: string_morsify.text = "";  copy_morse.disabled = True; app.root.delete_file(); app.root.clipboard = ''; app.root.delete_labels()
             size_hint: .1, .1
             pos_hint: {"center_x": .935, "center_y": .75}
             background_color: 0, 0, 0, 0
@@ -113,9 +113,6 @@
                 height: self.minimum_height
                 size_hint_y: None
 
-
-                MorseLabel:
-                    id: morse_label
 
         ToggleButton:
             id: loop_toggle
