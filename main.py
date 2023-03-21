@@ -113,10 +113,6 @@ class MainWidget(Widget):
         if self.string[0] == ' ':
             self.downtime = .01#.132 * 2
         if self.string[0] == '/':
-<<<<<<< HEAD
-            self.downtime = .01#.132 * 1
-                    
-=======
             self.downtime = .132 * 1
 
         self.downtime = 0
@@ -126,7 +122,6 @@ class MainWidget(Widget):
         static_text = '[b]'+ text + "[/b]"
         return static_text
 
->>>>>>> 4cdb47e5a35a339d16d9ff0ba110b944563409fc
     def highlight(self):
         try:
             self.ids.morse_label.text = self.ids.morse_label.text.replace(

@@ -9,7 +9,7 @@
 <MorseLabel@Label>:
     markup: True
     color: 0, 0, 0, 1
-    font_size: 72
+    font_size: self.width / 10
     text_size: self.width, None
     valign: "top"
     halign: "left"
@@ -89,6 +89,7 @@
                     size: self.size
                     pos: self.pos
 
+
         ScrollView:
             id: scroll_view
             do_scroll_x: False
@@ -109,11 +110,21 @@
                 pos: root.pos
                 height: self.minimum_height
                 size_hint_y: None
-                padding: 10, 10
 
 
                 MorseLabel:
                     id: morse_label
+                # Label:
+                #     id: morse_label
+                #     markup: True
+                #     color: 0, 0, 0, 1
+                #     font_size: 72
+                #     text_size: self.width, None
+                #     valign: "top"
+                #     halign: "left"
+                #     bold: True
+                #     size_hint: self.width, None
+                #     height: self.texture_size[1]
 
         ToggleButton:
             id: loop_toggle
