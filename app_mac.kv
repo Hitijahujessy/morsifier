@@ -2,6 +2,7 @@
 #: import WipeTransition kivy.uix.screenmanager.WipeTransition
 #:import Clipboard kivy.core.clipboard.Clipboard
 #:import Clock kivy.clock
+#:import os os
 <MorsifierApp>:
     size: root.size
     pos: root.pos
@@ -40,7 +41,7 @@
             id: string_morsify
             disabled: True if len(morse_label.text) > 0 else False
             size_hint: .75, .1
-            font_size: 32
+            font_size: 48
             pos_hint: {"center_x": .4, "center_y": .75}
             foreground_color: 0, 0, 0, 1
             background_color: (1, 1, 1, 1)
@@ -113,17 +114,6 @@
 
                 MorseLabel:
                     id: morse_label
-                # Label:
-                #     id: morse_label
-                #     markup: True
-                #     color: 0, 0, 0, 1
-                #     font_size: 72
-                #     text_size: self.width, None
-                #     valign: "top"
-                #     halign: "left"
-                #     bold: True
-                #     size_hint: self.width, None
-                #     height: self.texture_size[1]
 
         ToggleButton:
             id: loop_toggle
@@ -188,7 +178,7 @@
             text: "Download"
             text_size: self.size
             font_size: self.width/5
-            disabled: False if morse_label.text != "" else True
+            disabled: False if os.path.exists("sounds/morse_code.wav") else True
             halign: "center"
             valign: "middle"
             on_release: app.root.show_save()
@@ -216,12 +206,12 @@
         TextInput:
             id: text_input
             size_hint_y: None
-            height: 30
+            height: 60
             multiline: False
 
         BoxLayout:
             size_hint_y: None
-            height: 30
+            height: 60
             Button:
                 text: "Cancel"
                 on_release: root.cancel()

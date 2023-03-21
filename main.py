@@ -10,12 +10,15 @@ from kivy.lang import Builder
 from kivy.properties import BooleanProperty, NumericProperty, ObjectProperty
 from kivy.uix.popup import Popup
 from kivy.uix.widget import Widget
+import platform
 
 import morse_code_sound as ms
 
-# os.environ['KIVY_GL_BACKEND'] = 'angle_sdl2'  # Enable to prevent OpenGL error
-root_widget = Builder.load_file('app.kv')
-os.environ["KIVY_AUDIO"] = "avplayer"
+if "macOS" in platform.platform():
+    root_widget = Builder.load_file('app_mac.kv')
+else:
+    os.environ['KIVY_GL_BACKEND'] = 'angle_sdl2'  # Enable to prevent OpenGL error
+    root_widget = Builder.load_file('app.kv')
 
 MORSE_CODE_DICT = {'A': '.-', 'B': '-...',
                    'C': '-.-.', 'D': '-..', 'E': '.',
@@ -172,7 +175,7 @@ class MainWidget(Widget):
             
         return "[color=ff0000]"+char+"[/color]"
 
-    def highlight(self):
+    def highlight_old(self):
         try:
             self.ids.morse_label.text = self.ids.morse_label.text.replace(
                 "[color=ff0000]", "")
