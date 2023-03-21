@@ -10,12 +10,17 @@ from kivy.lang import Builder
 from kivy.properties import BooleanProperty, NumericProperty, ObjectProperty
 from kivy.uix.popup import Popup
 from kivy.uix.widget import Widget
+import platform
 
 import morse_code_sound as ms
 
-# os.environ['KIVY_GL_BACKEND'] = 'angle_sdl2'  # Enable to prevent OpenGL error
-root_widget = Builder.load_file('app.kv')
-os.environ["KIVY_AUDIO"] = "avplayer"
+if "macOS" in platform.platform():
+    root_widget = Builder.load_file("app_mac.kv")
+    os.environ["KIVY_AUDIO"] = "avplayer"
+else:
+    os.environ['KIVY_GL_BACKEND'] = 'angle_sdl2'  # Enable to prevent OpenGL error
+    root_widget = Builder.load_file('app.kv')
+
 
 MORSE_CODE_DICT = {'A': '.-', 'B': '-...',
                    'C': '-.-.', 'D': '-..', 'E': '.',
@@ -66,16 +71,21 @@ class MainWidget(Widget):
 
     def create_labels(self, string_to_label):
         string_list = []
-        words = 6
-        split_string = string_to_label.split()
+        words = 3
+        split_string = string_to_label.split("/")
         lines = len(split_string) / words
         index = 0
         endex = words
+        for s in range(len(split_string)):
+            if s != (len(split_string)-1):
+                split_string[s] = split_string[s] + ' /'
+                print(split_string)
         while lines > 0:
             lines -= 1
             string_list.append(split_string[index:endex])
             index += words
             endex += words
+        
         print(string_list)
 
         for i, string in enumerate(string_list):
@@ -127,7 +137,9 @@ class MainWidget(Widget):
             self.get_downtime(label.hidden_text[-(index-1)])
             self.typewriter = Clock.create_trigger(
                 self.type_morse, self.downtime)
+
             self.typewriter()
+            
         else:
             print("finished type writing")
 
@@ -169,7 +181,7 @@ class MainWidget(Widget):
             self.downtime = .132 * 2
         elif char == '/':
             self.downtime = .132 * 1
-        self.downtime = 0.05
+        # self.downtime = 0.05
 
     def highlight(self):
 
