@@ -9,7 +9,7 @@
 <MorseLabel@Label>:
     markup: True
     color: 0, 0, 0, 1
-    font_size: 60
+    font_size: self.width / 10
     text_size: self.width, None
     valign: "top"
     halign: "left"
@@ -38,7 +38,7 @@
 
         TextInput:
             id: string_morsify
-            disabled: True if len(morse_label.text) > 0 else False
+            disabled: True if len(scroll_layout.children) > 0 else False
             size_hint: .75, .1
             font_size: 32
             pos_hint: {"center_x": .4, "center_y": .75}
@@ -55,7 +55,7 @@
         Button:
             id: proceed_button
             text: "Proceed"
-            disabled: True if len(morse_label.text) > 0 or len(string_morsify.text) == 0 else False
+            disabled: True if len(scroll_layout.children) > 0 or len(string_morsify.text) == 0 else False
             text_size: self.size
             font_size: self.width/4
             halign: "center"
@@ -80,7 +80,7 @@
             halign: "center"
             valign: "middle"
             on_press: app.root.typewriter.cancel(); app.root.morse_loop.cancel()
-            on_release: string_morsify.text = ""; morse_label.text = "";  copy_morse.disabled = True; app.root.delete_file(); app.root.clipboard = ''; app.root.delete_labels()
+            on_release: string_morsify.text = "";  copy_morse.disabled = True; app.root.delete_file(); app.root.clipboard = ''; app.root.delete_labels()
             size_hint: .1, .1
             pos_hint: {"center_x": .935, "center_y": .75}
             background_color: 0, 0, 0, 0
@@ -113,10 +113,6 @@
                 size_hint_y: None
                 padding: 10, 10
 
-
-                MorseLabel:
-                    id: morse_label
-                    text: "test"
 
         ToggleButton:
             id: loop_toggle
@@ -181,7 +177,7 @@
             text: "Download"
             text_size: self.size
             font_size: self.width/5
-            disabled: False if morse_label.text != "" else True
+            disabled: False if len(scroll_layout.children) == 0 else True
             halign: "center"
             valign: "middle"
             on_release: app.root.show_save()
