@@ -172,7 +172,7 @@ class MainWidget(Widget):
             
         return "[color=ff0000]"+char+"[/color]"
 
-    def highlight_old(self):
+    def highlight(self):
         try:
             self.ids.morse_label.text = self.ids.morse_label.text.replace(
                 "[color=ff0000]", "")
