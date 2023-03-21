@@ -58,7 +58,6 @@ class MainWidget(Widget):
         super(MainWidget, self).__init__(**kwargs)
         self.typewriter = Clock.create_trigger(self.type_morse, self.downtime)
         self.morse_loop = Clock.create_trigger(self.repeat, self.downtime)
-        self.check_loop = Clock.schedule_once(self.activate_loop, 0)
 
     def translate_to_morse(self):
         self.morse_string = self.create_morse_string(self.text_string)
@@ -91,7 +90,7 @@ class MainWidget(Widget):
         for i, string in enumerate(string_list):
             morse_label = Factory.MorseLabel()
             self.ids.scroll_layout.add_widget(morse_label)
-            morse_label.hidden_text = ' '.join(string)
+            morse_label.hidden_text = ' '.join(string) + " "
             morse_label.id = "morse" + str(i)
 
     def get_label(self):
@@ -99,7 +98,7 @@ class MainWidget(Widget):
         for label in reversed(self.ids.scroll_layout.children):
             if label.text == label.hidden_text:
                 continue
-            print(label.id)
+            # print(label.id)
             return label
         print("no labels have a hidden text")
 
@@ -124,7 +123,6 @@ class MainWidget(Widget):
                     char, MORSE_CODE_DICT[char] + " ")
         string = string.replace(" +", " / ")
         string = string.replace("+", "")
-        string = string.strip()
 
         return string
 
@@ -135,6 +133,8 @@ class MainWidget(Widget):
             index = len(label.hidden_text) - len(label.text)
             label.text += label.hidden_text[-index]
             self.get_downtime(label.hidden_text[-(index-1)])
+            if label.text == label.hidden_text:
+                self.scroll(label)
             self.typewriter = Clock.create_trigger(
                 self.type_morse, self.downtime)
 
@@ -145,32 +145,28 @@ class MainWidget(Widget):
 
     def repeat(self, dt):
         self.typewriter.cancel()
-        if self.loop:
-
-            if dt >= 1:
-                self.play_sound(restart=True)
-                self.ids.scroll_view.scroll_y = 1
+        if self.downtime >= 1:
+            self.play_sound(restart=True)
+            self.scroll(self.ids.scroll_layout.children[-1])
+        else:
+            self.play_sound()
+        t = self.highlight()
+        print(t)
+        self.morse_string = self.morse_string[1:]
+        try:
+            self.get_downtime(self.morse_string[0])
+        except IndexError:
+            self.downtime = 1
+        self.morse_loop = Clock.create_trigger(self.repeat, self.downtime)
+        self.morse_loop()
+        if len(self.morse_string) == 0:
+            if self.ids.loop_toggle.state == "down":
+                self.morse_string = self.clipboard
             else:
-                self.play_sound()
-
-            t = self.highlight()
-            print(t)
-
-            self.morse_string = self.morse_string[1:]
-
-            try:
-                self.get_downtime(self.morse_string[0])
-            except IndexError:
-                self.downtime = 1
-            if len(self.morse_string) == 0:
-                self.downtime = 1
-            self.morse_loop = Clock.create_trigger(self.repeat, self.downtime)
-            if len(self.morse_string) > 0:
-                self.morse_loop()
-            elif len(self.morse_string) == 0:
-                if self.ids.loop_toggle.state == "down":
-                    self.morse_string = self.clipboard
-                    self.morse_loop()
+                self.morse_loop.cancel()
+            for label in self.ids.scroll_layout.children:
+                label.text = label.hidden_text[:]
+        
 
     def get_downtime(self, char):
         if char == '.':
@@ -185,8 +181,8 @@ class MainWidget(Widget):
 
     def highlight(self):
 
-        next_line = self.ids.scroll_layout.children[-1]
-        next_label = False
+        next_label = self.ids.scroll_layout.children[-1]
+        do_next_label = False
         for label in reversed(self.ids.scroll_layout.children):
             if "[color=ff0000]" in label.text:
                 i = list(label.text).index("[") + 1
@@ -197,24 +193,28 @@ class MainWidget(Widget):
                     return "changed inline highlight at index: " + str(i) + " of label: " + str(label.id)
                 except IndexError:
                     label.text = label.hidden_text[:]
-                    next_label = True
-            elif next_label:
-                next_line = label
+                    do_next_label = True
+            elif do_next_label:
+                next_label = label
+                self.scroll(label)
                 break
 
         if len(self.ids.scroll_layout.children) > 0:
-            if next_line.id == "morse0" and next_label is True:
+            if next_label.id == "morse0" and do_next_label is True:
                 return "Got to the end of the loop"
             else:
-                next_line.text = "[color=ff0000]" + next_line.hidden_text[0] + \
-                    "[/color]" + next_line.hidden_text[1:]
-                return "started highlight at the beginging of the label: " + str(next_line.id)
+                next_label.text = "[color=ff0000]" + next_label.hidden_text[0] + \
+                    "[/color]" + next_label.hidden_text[1:]
+                return "started highlight at index 0 of the label: " + str(next_label.id)
         else:
-            print("No labels exist")
+            print("No scroll labels exist")
+
+    def scroll(self, label):
+        self.ids.scroll_view.scroll_to(label)
 
     def loop_toggle(self):
         check = self.ids.loop_toggle
-
+        self.check_loop = Clock.create_trigger(self.activate_loop, 0)
         if check.state == "normal":
             self.loop = False
             try:
@@ -222,20 +222,28 @@ class MainWidget(Widget):
             except AttributeError:
                 pass
         elif check.state == "down":
-            self.loop = True
+            try:
+                self.scroll(self.ids.scroll_layout.children[-1])
+            except IndexError:
+                pass
             self.check_loop()
 
     def activate_loop(self, dt):
         """Waits for the full morse string to appear on screen"""
-        for label in self.ids.scroll_layout.children:
-            if label.text != label.hidden_text:
+        if len(self.ids.scroll_layout.children) > 0:
+            listx = [True if x.text ==
+                     x.hidden_text else False for x in self.ids.scroll_layout.children]
+            if False in listx:
                 self.check_loop()
-            elif self.clipboard:
+            else:
                 self.morse_string = self.clipboard
+                self.loop = True
                 self.morse_loop()
+        else:
+            self.check_loop()
 
     def do_proceed(self):
-        if not self.loop:
+        if self.ids.scroll_layout.children[-1].text == '':
             self.typewriter()
         else:
             self.morse_loop()
