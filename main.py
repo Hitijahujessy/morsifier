@@ -169,6 +169,7 @@ class MainWidget(Widget):
         
 
     def get_downtime(self, char):
+        #speed =  -abs(self.ids.morse_speed.value)
         if char == '.':
             self.downtime = .132
         elif char == '-':
@@ -177,7 +178,7 @@ class MainWidget(Widget):
             self.downtime = .132 * 2
         elif char == '/':
             self.downtime = .132 * 1
-        # self.downtime = 0.05
+        #self.downtime = 0.05
 
     def highlight(self):
 

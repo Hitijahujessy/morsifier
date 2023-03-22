@@ -42,7 +42,7 @@
 
         TextInput:
             id: string_morsify
-            disabled: True if len(morse_label.text) > 0 else False
+            disabled: True if len(scroll_layout.children) > 0 else False
             size_hint: .75, .1
             font_size: 48
             pos_hint: {"center_x": .4, "center_y": .75}
@@ -80,7 +80,7 @@
             halign: "center"
             valign: "middle"
             on_press: app.root.typewriter.cancel(); app.root.morse_loop.cancel(); proceed_button.disabled = False
-            on_release: string_morsify.text = ""; morse_label.text = "";  copy_morse.disabled = True; app.root.delete_file(); app.root.clipboard = ''; app.root.delete_labels()
+            on_release: string_morsify.text = ""; copy_morse.disabled = True; app.root.delete_file(); app.root.clipboard = ''; app.root.delete_labels()
             size_hint: .1, .1
             pos_hint: {"center_x": .935, "center_y": .75}
             background_color: 0, 0, 0, 0
@@ -123,7 +123,7 @@
             disabled: False
             on_press:
                 app.root.loop_toggle()
-            pos_hint: {"center_x": .0775, "center_y": .625}
+            pos_hint: {"center_x": .0775, "center_y": .635}
             size_hint: .1, .05
             background_color: 0, 0, 0, 0
             canvas.before:
@@ -133,6 +133,84 @@
                     size: self.size
                     pos: self.pos
 
+        GridLayout:
+            cols: 3
+            pos_hint: {"center_x": .45, "center_y": .085}
+            size_hint: .15, .15
+            spacing: 12.5
+            ToggleButton:
+                group: "speed_multiplier"
+                text: "x0.5"
+                multiplier: .5
+                on_press: app.root.multiplier = self.multiplier
+                background_color: 0, 0, 0, 0
+                canvas.before:
+                Color:
+                    rgba: (0, .4, .66, 1) if self.state == "normal" else (0, .2, .46, 1)
+                RoundedRectangle:
+                    size: self.size
+                    pos: self.pos
+            ToggleButton:
+                group: "speed_multiplier"
+                text: "x1"
+                state: "down"
+                multiplier: 0
+                on_press: app.root.multiplier = self.multiplier
+                background_color: 0, 0, 0, 0
+                canvas.before:
+                Color:
+                    rgba: (0, .4, .66, 1) if self.state == "normal" else (0, .2, .46, 1)
+                RoundedRectangle:
+                    size: self.size
+                    pos: self.pos
+            ToggleButton:
+                group: "speed_multiplier"
+                text: "x1.25"
+                multiplier: -.25
+                on_press: app.root.multiplier = self.multiplier
+                background_color: 0, 0, 0, 0
+                canvas.before:
+                Color:
+                    rgba: (0, .4, .66, 1) if self.state == "normal" else (0, .2, .46, 1)
+                RoundedRectangle:
+                    size: self.size
+                    pos: self.pos
+            ToggleButton:
+                group: "speed_multiplier"
+                text: "x1.5"
+                multiplier: -.5
+                on_press: app.root.multiplier = self.multiplier
+                background_color: 0, 0, 0, 0
+                canvas.before:
+                Color:
+                    rgba: (0, .4, .66, 1) if self.state == "normal" else (0, .2, .46, 1)
+                RoundedRectangle:
+                    size: self.size
+                    pos: self.pos
+            ToggleButton:
+                group: "speed_multiplier"
+                text: "x1.75"
+                multiplier: -.75
+                on_press: app.root.multiplier = self.multiplier
+                background_color: 0, 0, 0, 0
+                canvas.before:
+                Color:
+                    rgba: (0, .4, .66, 1) if self.state == "normal" else (0, .2, .46, 1)
+                RoundedRectangle:
+                    size: self.size
+                    pos: self.pos
+            ToggleButton:
+                group: "speed_multiplier"
+                text: "x2"
+                multiplier: -1
+                on_press: app.root.multiplier = self.multiplier
+                background_color: 0, 0, 0, 0
+                canvas.before:
+                Color:
+                    rgba: (0, .4, .66, 1) if self.state == "normal" else (0, .2, .46, 1)
+                RoundedRectangle:
+                    size: self.size
+                    pos: self.pos
 
         Button:
             id: copy_morse
