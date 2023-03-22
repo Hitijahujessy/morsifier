@@ -120,7 +120,7 @@ class MainWidget(Widget):
         else:
             for label in self.ids.scroll_layout.children:
                 print("failed to delete label:" + label.id)
-    
+
     def create_buttons(self):
         speed_list = [6, 8, 10, 12, 14, 16, 20, 22, 24, 26]
         for speed in speed_list:
@@ -131,7 +131,6 @@ class MainWidget(Widget):
             self.ids.button_grid.add_widget(button)
             button.text = str(speed)
             button.multiplier = multi
-        
 
     def create_morse_string(self, string):
         string = string.strip()
@@ -168,7 +167,7 @@ class MainWidget(Widget):
 
     def repeat(self, dt):
         self.typewriter.cancel()
-        if self.downtime >= 1:
+        if self.downtime >= 1.5:
             self.play_sound(restart=True)
             self.scroll(self.ids.scroll_layout.children[-1])
         else:
@@ -215,14 +214,32 @@ class MainWidget(Widget):
             time -= (ms.TIME_UNIT / 2)
         self.downtime = 0
         return time
-    
+
     def time_multiplier(self, multiplier=1):
         ms.TIME_UNIT = .2
         ms.TIME_UNIT = ms.TIME_UNIT / multiplier
-        
+
     def change_tempo(self, multiplier):
         self.time_multiplier(multiplier)
         ms.create_sounds()
+        if self.clipboard:
+            ms.create_wav_file(self.clipboard)
+        if self.morse_sound:
+            if self.morse_sound.state == "play":
+                self.morse_sound.stop()
+        self.morse_sound = SoundLoader.load('sounds/morse_code.wav')
+
+        for label in self.ids.scroll_layout.children:
+            if "[color" in label.text:
+                label.text = label.hidden_text
+                self.morse_loop.cancel()
+                self.check_loop()
+                break
+            elif label.text != label.hidden_text and label.text != "":
+                for label in self.ids.scroll_layout.children:
+                    label.text = ""
+                self.play_sound(restart=True)
+                break
 
     def highlight(self):
 
@@ -302,6 +319,7 @@ class MainWidget(Widget):
 
         words = round(60 / PARIS_TIME, 2)
         print(str(words) + " words per minute")
+        self.time_multiplier()
         return words
 
     def play_sound(self, restart=False):

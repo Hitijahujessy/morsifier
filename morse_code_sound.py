@@ -70,8 +70,6 @@ def create_wav_file(morse_string):
                 else:
                     play_sound += tone_silent * 3
             except IndexError:
-                pass
-
-        
+                pass        
         
     play_sound.export("sounds/morse_code.wav", format='wav')
