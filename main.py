@@ -16,7 +16,7 @@ import morse_code_sound as ms
 
 if "macOS" in platform.platform():
     root_widget = Builder.load_file("app_mac.kv")
-    os.environ["KIVY_AUDIO"] = "avplayer"
+    os.environ["KIVY_AUDIO"] = "ffpyplayer"
 else:
     os.environ['KIVY_GL_BACKEND'] = 'angle_sdl2'  # Enable to prevent OpenGL error
     root_widget = Builder.load_file('app.kv')
