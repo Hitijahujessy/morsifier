@@ -29,11 +29,14 @@ def output_sound(path, freq, dur):
     output_wave(path, frames)
 
 
-TIME_UNIT = 0.2
-output_sound('sounds/sine320s.wav', 320, TIME_UNIT)  # .
-output_sound('sounds/sine320l.wav', 320, TIME_UNIT * 3)  # -
-output_sound('sounds/sine0.wav', 0, TIME_UNIT)  # /
 
+def create_sounds():
+    output_sound('sounds/sine320s.wav', 320, TIME_UNIT)  # .
+    output_sound('sounds/sine320l.wav', 320, TIME_UNIT * 3)  # -
+    output_sound('sounds/sine0.wav', 0, TIME_UNIT)  # /
+    print("Created wav files with TIME_UNIT: " + str(TIME_UNIT))
+TIME_UNIT = 0.2
+create_sounds()
 
 def create_wav_file(morse_string):
     play_sound = AudioSegment.from_wav('sounds/sine0.wav')

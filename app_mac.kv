@@ -21,6 +21,19 @@
     max_lines: 1
     hidden_text: ""
 
+<SpeedButton@Button>
+    group: "speed_multiplier"
+    text: " "
+    multiplier: 1
+    on_press: app.root.multiplier = self.multiplier; app.root.change_tempo(self.multiplier); 
+    background_color: 0, 0, 0, 0
+    canvas.before:
+        Color:
+            rgba: (0, .4, .66, 1) if self.state == "normal" else (0, .2, .46, 1)
+        RoundedRectangle:
+            size: self.size
+            pos: self.pos
+
 <MainWidget>
     canvas.before:
         Color:
@@ -141,131 +154,132 @@
                         
 
         GridLayout:
+            id: button_grid
             cols: 5
             pos_hint: {"center_x": .45, "center_y": .605}
             size_hint: .275, .15
             spacing: 12.5
-            ToggleButton:
-                group: "speed_multiplier"
-                text: "x0.5"
-                multiplier: .5
-                on_press: app.root.multiplier = self.multiplier; app.root.time_multiplier()
-                background_color: 0, 0, 0, 0
-                canvas.before:
-                    Color:
-                        rgba: (0, .4, .66, 1) if self.state == "normal" else (0, .2, .46, 1)
-                    RoundedRectangle:
-                        size: self.size
-                        pos: self.pos
-            ToggleButton:
-                group: "speed_multiplier"
-                text: "x1"
-                state: "down"
-                multiplier: 1
-                on_press: app.root.multiplier = self.multiplier; app.root.time_multiplier()
-                background_color: 0, 0, 0, 0
-                canvas.before:
-                    Color:
-                        rgba: (0, .4, .66, 1) if self.state == "normal" else (0, .2, .46, 1)
-                    RoundedRectangle:
-                        size: self.size
-                        pos: self.pos
-            ToggleButton:
-                group: "speed_multiplier"
-                text: "x1.25"
-                multiplier: 1.25
-                on_press: app.root.multiplier = self.multiplier; app.root.time_multiplier()
-                background_color: 0, 0, 0, 0
-                canvas.before:
-                    Color:
-                        rgba: (0, .4, .66, 1) if self.state == "normal" else (0, .2, .46, 1)
-                    RoundedRectangle:
-                        size: self.size
-                        pos: self.pos
-            ToggleButton:
-                group: "speed_multiplier"
-                text: "x1.5"
-                multiplier: 1.5
-                on_press: app.root.multiplier = self.multiplier; app.root.time_multiplier()
-                background_color: 0, 0, 0, 0
-                canvas.before:
-                    Color:
-                        rgba: (0, .4, .66, 1) if self.state == "normal" else (0, .2, .46, 1)
-                    RoundedRectangle:
-                        size: self.size
-                        pos: self.pos
-            ToggleButton:
-                group: "speed_multiplier"
-                text: "x1.75"
-                multiplier: 1.75
-                on_press: app.root.multiplier = self.multiplier; app.root.time_multiplier()
-                background_color: 0, 0, 0, 0
-                canvas.before:
-                    Color:
-                        rgba: (0, .4, .66, 1) if self.state == "normal" else (0, .2, .46, 1)
-                    RoundedRectangle:
-                        size: self.size
-                        pos: self.pos
-            ToggleButton:
-                group: "speed_multiplier"
-                text: "x2"
-                multiplier: 2
-                on_press: app.root.multiplier = self.multiplier; app.root.time_multiplier()
-                background_color: 0, 0, 0, 0
-                canvas.before:
-                    Color:
-                        rgba: (0, .4, .66, 1) if self.state == "normal" else (0, .2, .46, 1)
-                    RoundedRectangle:
-                        size: self.size
-                        pos: self.pos
-            ToggleButton:
-                group: "speed_multiplier"
-                text: "x4"
-                multiplier: 4
-                on_press: app.root.multiplier = self.multiplier; app.root.time_multiplier()
-                background_color: 0, 0, 0, 0
-                canvas.before:
-                    Color:
-                        rgba: (0, .4, .66, 1) if self.state == "normal" else (0, .2, .46, 1)
-                    RoundedRectangle:
-                        size: self.size
-                        pos: self.pos
-            ToggleButton:
-                group: "speed_multiplier"
-                text: "x7"
-                multiplier: 6
-                on_press: app.root.multiplier = self.multiplier; app.root.time_multiplier()
-                background_color: 0, 0, 0, 0
-                canvas.before:
-                    Color:
-                        rgba: (0, .4, .66, 1) if self.state == "normal" else (0, .2, .46, 1)
-                    RoundedRectangle:
-                        size: self.size
-                        pos: self.pos
-            ToggleButton:
-                group: "speed_multiplier"
-                text: "x8"
-                multiplier: 8
-                on_press: app.root.multiplier = self.multiplier; app.root.time_multiplier()
-                background_color: 0, 0, 0, 0
-                canvas.before:
-                    Color:
-                        rgba: (0, .4, .66, 1) if self.state == "normal" else (0, .2, .46, 1)
-                    RoundedRectangle:
-                        size: self.size
-                        pos: self.pos
-            ToggleButton:
-                group: "speed_multiplier"
-                text: "x10"
-                multiplier: 10
-                on_press: app.root.multiplier = self.multiplier; app.root.time_multiplier()
-                background_color: 0, 0, 0, 0
-                canvas.before:
-                    Color:
-                        rgba: (0, .4, .66, 1) if self.state == "normal" else (0, .2, .46, 1)
-                    RoundedRectangle:
-                        size: self.size
-                        pos: self.pos
+            #ToggleButton:
+            #    group: "speed_multiplier"
+            #    text: "x0.5"
+            #    multiplier: .5
+            #    on_press: app.root.multiplier = self.multiplier; app.root.time_multiplier()
+            #    background_color: 0, 0, 0, 0
+            #    canvas.before:
+            #        Color:
+            #            rgba: (0, .4, .66, 1) if self.state == "normal" else (0, .2, .46, 1)
+            #        RoundedRectangle:
+            #            size: self.size
+            #            pos: self.pos
+            #ToggleButton:
+            #    group: "speed_multiplier"
+            #    text: app.root.get_wpm()
+            #    state: "down"
+            #    multiplier: 1
+            #    on_press: app.root.multiplier = self.multiplier; app.root.time_multiplier()
+            #    background_color: 0, 0, 0, 0
+            #    canvas.before:
+            #        Color:
+            #            rgba: (0, .4, .66, 1) if self.state == "normal" else (0, .2, .46, 1)
+            #        RoundedRectangle:
+            #            size: self.size
+            #            pos: self.pos
+            #ToggleButton:
+            #    group: "speed_multiplier"
+            #    text: "x1.25"
+            #    multiplier: 1.25
+            #    on_press: app.root.multiplier = self.multiplier; app.root.time_multiplier()
+            #    background_color: 0, 0, 0, 0
+            #    canvas.before:
+            #        Color:
+            #            rgba: (0, .4, .66, 1) if self.state == "normal" else (0, .2, .46, 1)
+            #        RoundedRectangle:
+            #            size: self.size
+            #            pos: self.pos
+            #ToggleButton:
+            #    group: "speed_multiplier"
+            #    text: "x1.5"
+            #    multiplier: 1.5
+            #    on_press: app.root.multiplier = self.multiplier; app.root.time_multiplier()
+            #    background_color: 0, 0, 0, 0
+            #    canvas.before:
+            #        Color:
+            #            rgba: (0, .4, .66, 1) if self.state == "normal" else (0, .2, .46, 1)
+            #        RoundedRectangle:
+            #            size: self.size
+            #            pos: self.pos
+            #ToggleButton:
+            #    group: "speed_multiplier"
+            #    text: "x1.75"
+            #    multiplier: 1.75
+            #    on_press: app.root.multiplier = self.multiplier; app.root.time_multiplier()
+            #    background_color: 0, 0, 0, 0
+            #    canvas.before:
+            #        Color:
+            #            rgba: (0, .4, .66, 1) if self.state == "normal" else (0, .2, .46, 1)
+            #        RoundedRectangle:
+            #            size: self.size
+            #            pos: self.pos
+            #ToggleButton:
+            #    group: "speed_multiplier"
+            #    text: "x2"
+            #    multiplier: 2
+            #    on_press: app.root.multiplier = self.multiplier; app.root.time_multiplier()
+            #    background_color: 0, 0, 0, 0
+            #    canvas.before:
+            #        Color:
+            #            rgba: (0, .4, .66, 1) if self.state == "normal" else (0, .2, .46, 1)
+            #        RoundedRectangle:
+            #            size: self.size
+            #            pos: self.pos
+            #ToggleButton:
+            #    group: "speed_multiplier"
+            #    text: "x4"
+            #    multiplier: 4
+            #    on_press: app.root.multiplier = self.multiplier; app.root.time_multiplier()
+            #    background_color: 0, 0, 0, 0
+            #    canvas.before:
+            #        Color:
+            #            rgba: (0, .4, .66, 1) if self.state == "normal" else (0, .2, .46, 1)
+            #        RoundedRectangle:
+            #            size: self.size
+            #            pos: self.pos
+            #ToggleButton:
+            #    group: "speed_multiplier"
+            #    text: "x7"
+            #    multiplier: 6
+            #    on_press: app.root.multiplier = self.multiplier; app.root.time_multiplier()
+            #    background_color: 0, 0, 0, 0
+            #    canvas.before:
+            #        Color:
+            #            rgba: (0, .4, .66, 1) if self.state == "normal" else (0, .2, .46, 1)
+            #        RoundedRectangle:
+            #            size: self.size
+            #            pos: self.pos
+            #ToggleButton:
+            #    group: "speed_multiplier"
+            #    text: "x8"
+            #    multiplier: 8
+            #    on_press: app.root.multiplier = self.multiplier; app.root.time_multiplier()
+            #    background_color: 0, 0, 0, 0
+            #    canvas.before:
+            #        Color:
+            #            rgba: (0, .4, .66, 1) if self.state == "normal" else (0, .2, .46, 1)
+            #        RoundedRectangle:
+            #            size: self.size
+            #            pos: self.pos
+            #ToggleButton:
+            #    group: "speed_multiplier"
+            #    text: "x10"
+            #    multiplier: 10
+            #    on_press: app.root.multiplier = self.multiplier; app.root.time_multiplier()
+            #    background_color: 0, 0, 0, 0
+            #    canvas.before:
+            #        Color:
+            #            rgba: (0, .4, .66, 1) if self.state == "normal" else (0, .2, .46, 1)
+            #        RoundedRectangle:
+            #            size: self.size
+            #            pos: self.pos
 
         Button:
             id: copy_morse

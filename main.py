@@ -20,7 +20,7 @@ if "macOS" in platform.platform():
 else:
     # Enable to prevent OpenGL error
     os.environ['KIVY_GL_BACKEND'] = 'angle_sdl2'
-    root_widget = Builder.load_file('app.kv')
+    root_widget = Builder.load_file('app_mac.kv')
 
 
 MORSE_CODE_DICT = {'A': '.-', 'B': '-...',
@@ -61,6 +61,7 @@ class MainWidget(Widget):
         super(MainWidget, self).__init__(**kwargs)
         self.typewriter = Clock.create_trigger(self.type_morse, self.downtime)
         self.morse_loop = Clock.create_trigger(self.repeat, self.downtime)
+        self.create_buttons()
 
     def translate_to_morse(self):
         self.morse_string = self.create_morse_string(self.text_string)
@@ -119,6 +120,18 @@ class MainWidget(Widget):
         else:
             for label in self.ids.scroll_layout.children:
                 print("failed to delete label:" + label.id)
+    
+    def create_buttons(self):
+        speed_list = [6, 8, 10, 12, 14, 16, 20, 22, 24, 26]
+        for speed in speed_list:
+            multi = 0.1
+            while speed != int(self.get_wpm(multi)):
+                multi += 0.01
+            button = Factory.SpeedButton()
+            self.ids.button_grid.add_widget(button)
+            button.text = str(speed)
+            button.multiplier = multi
+        
 
     def create_morse_string(self, string):
         string = string.strip()
@@ -165,7 +178,7 @@ class MainWidget(Widget):
         try:
             self.set_downtime(self.morse_string[0])
         except IndexError:
-            self.downtime = 5
+            self.downtime = 2
         self.morse_loop = Clock.create_trigger(self.repeat, self.downtime)
         self.morse_loop()
         if len(self.morse_string) == 0:
@@ -191,9 +204,10 @@ class MainWidget(Widget):
 
         # self.downtime = 0.05
 
-    def get_string_time(self, string):
+    def get_string_time(self, string, multiplier=1):
         string = string.strip()
         time = 0
+        self.time_multiplier(multiplier)
         for char in string:
             self.set_downtime(char)
             time += self.downtime
@@ -201,9 +215,14 @@ class MainWidget(Widget):
             time -= (ms.TIME_UNIT / 2)
         self.downtime = 0
         return time
-    def time_multiplier(self):
+    
+    def time_multiplier(self, multiplier=1):
         ms.TIME_UNIT = .2
-        ms.TIME_UNIT = ms.TIME_UNIT / self.multiplier
+        ms.TIME_UNIT = ms.TIME_UNIT / multiplier
+        
+    def change_tempo(self, multiplier):
+        self.time_multiplier(multiplier)
+        ms.create_sounds()
 
     def highlight(self):
 
@@ -274,17 +293,16 @@ class MainWidget(Widget):
             self.typewriter = Clock.create_trigger(
                 self.type_morse, self.downtime)
             self.typewriter()
-            self.get_wpm()
         else:
             self.morse_loop()
 
-    def get_wpm(self):
+    def get_wpm(self, multiplier=1) -> float:
         PARIS = self.create_morse_string("PARIS")
-        PARIS_TIME = self.get_string_time(PARIS)
+        PARIS_TIME = self.get_string_time(PARIS, multiplier)
 
-        word = round(60 / PARIS_TIME, 2)
-        print(str(word) + " words per minute")
-        return word
+        words = round(60 / PARIS_TIME, 2)
+        print(str(words) + " words per minute")
+        return words
 
     def play_sound(self, restart=False):
         if restart:
