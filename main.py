@@ -35,7 +35,7 @@ MORSE_CODE_DICT = {'A': '.-', 'B': '-...',
                    '4': '....-', '5': '.....', '6': '-....',
                    '7': '--...', '8': '---..', '9': '----.',
                    '0': '-----', ',': '--..--', '·': '.-.-.-',
-                   '?': '..--..', '/': '-..-.', '–': '-....-',
+                   '?': '..--..', '|': '-..-.', '–': '-....-',
                    '(': '-.--.', ')': '-.--.-', "'": '.----.',
                    '"': '.-..-.', '!': '-·-·--'}
 
@@ -53,6 +53,7 @@ class MainWidget(Widget):
     savefile = ObjectProperty(None)
     morse_sound = ObjectProperty(None)
     downtime = NumericProperty(0)
+    downtime_sum = NumericProperty(0)
 
     def __init__(self, **kwargs):
         super(MainWidget, self).__init__(**kwargs)
@@ -70,27 +71,32 @@ class MainWidget(Widget):
 
     def create_labels(self, string_to_label):
         string_list = []
-        words = 3
-        split_string = string_to_label.split("/")
-        lines = len(split_string) / words
-        index = 0
-        endex = words
-        for s in range(len(split_string)):
-            if s != (len(split_string)-1):
-                split_string[s] = split_string[s] + ' /'
-                print(split_string)
+        MAX_CHAR = 25
+        lines = 1 + len(string_to_label) // MAX_CHAR
+        
         while lines > 0:
+            n = 0
+            line = None
+            while not line:
+                try:
+                    if string_to_label[MAX_CHAR+1-n] == " ":
+                        line = string_to_label[:MAX_CHAR+1-n]
+                    else:
+                        n+= 1
+                        if n > 6:
+                            print("n shouldnt be higher than 6, n ==: "+ str(n))
+                except IndexError:
+                    line = string_to_label[:]
+            string_to_label = string_to_label[MAX_CHAR+1-n:]
+            string_list.append(line)
             lines -= 1
-            string_list.append(split_string[index:endex])
-            index += words
-            endex += words
         
         print(string_list)
 
         for i, string in enumerate(string_list):
             morse_label = Factory.MorseLabel()
             self.ids.scroll_layout.add_widget(morse_label)
-            morse_label.hidden_text = ' '.join(string) + " "
+            morse_label.hidden_text = ''.join(string)
             morse_label.id = "morse" + str(i)
 
     def get_label(self):
@@ -117,6 +123,7 @@ class MainWidget(Widget):
         string = string.replace(" ", "+")
         string = string.replace(".", "·")
         string = string.replace("-", "–")
+        string = string.replace("/", "|")
         for char in string:
             if char in MORSE_CODE_DICT:
                 string = string.replace(
@@ -128,11 +135,12 @@ class MainWidget(Widget):
 
     def type_morse(self, dt):
         label = self.get_label()
+        print(dt)
         if label:
             self.morse_string = label.hidden_text
             index = len(label.hidden_text) - len(label.text)
             label.text += label.hidden_text[-index]
-            self.get_downtime(label.hidden_text[-(index-1)])
+            self.set_downtime(label.text[-1])
             if label.text == label.hidden_text:
                 self.scroll(label)
             self.typewriter = Clock.create_trigger(
@@ -142,21 +150,22 @@ class MainWidget(Widget):
             
         else:
             print("finished type writing")
+            self.downtime = 0
 
     def repeat(self, dt):
         self.typewriter.cancel()
+        print(str(dt) + " = recorded loop dt")
         if self.downtime >= 1:
             self.play_sound(restart=True)
             self.scroll(self.ids.scroll_layout.children[-1])
         else:
             self.play_sound()
         t = self.highlight()
-        print(t)
         self.morse_string = self.morse_string[1:]
         try:
-            self.get_downtime(self.morse_string[0])
+            self.set_downtime(self.morse_string[0])
         except IndexError:
-            self.downtime = 1
+            self.downtime = 5
         self.morse_loop = Clock.create_trigger(self.repeat, self.downtime)
         self.morse_loop()
         if len(self.morse_string) == 0:
@@ -168,17 +177,20 @@ class MainWidget(Widget):
                 label.text = label.hidden_text[:]
         
 
-    def get_downtime(self, char):
-        #speed =  -abs(self.ids.morse_speed.value)
+    def set_downtime(self, char):
+        TIME_UNIT = ms.TIME_UNIT / 2
         if char == '.':
-            self.downtime = .132
+            self.downtime = TIME_UNIT
+            self.downtime += TIME_UNIT
         elif char == '-':
-            self.downtime = .132 * 2
+            self.downtime = TIME_UNIT * 3
+            self.downtime += TIME_UNIT
         elif char == ' ':
-            self.downtime = .132 * 2
+            self.downtime = TIME_UNIT * 2
         elif char == '/':
-            self.downtime = .132 * 1
-        #self.downtime = 0.05
+            self.downtime = TIME_UNIT * 2
+        
+        # self.downtime = 0.05
 
     def highlight(self):
 

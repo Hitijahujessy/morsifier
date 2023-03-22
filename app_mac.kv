@@ -142,7 +142,7 @@
                 group: "speed_multiplier"
                 text: "x0.5"
                 multiplier: .5
-                on_press: app.root.multiplier = self.multiplier
+                on_press: app.root.ms.TIME_UNIT = app.root.ms.TIME_UNIT * self.multiplier
                 background_color: 0, 0, 0, 0
                 canvas.before:
                 Color:
@@ -154,8 +154,8 @@
                 group: "speed_multiplier"
                 text: "x1"
                 state: "down"
-                multiplier: 0
-                on_press: app.root.multiplier = self.multiplier
+                multiplier: 1
+                on_press: app.root.ms.TIME_UNIT = app.root.ms.TIME_UNIT * self.multiplier
                 background_color: 0, 0, 0, 0
                 canvas.before:
                 Color:
@@ -166,8 +166,8 @@
             ToggleButton:
                 group: "speed_multiplier"
                 text: "x1.25"
-                multiplier: -.25
-                on_press: app.root.multiplier = self.multiplier
+                multiplier: 1.25
+                on_press: app.root.ms.TIME_UNIT = app.root.ms.TIME_UNIT * self.multiplier
                 background_color: 0, 0, 0, 0
                 canvas.before:
                 Color:
@@ -178,8 +178,8 @@
             ToggleButton:
                 group: "speed_multiplier"
                 text: "x1.5"
-                multiplier: -.5
-                on_press: app.root.multiplier = self.multiplier
+                multiplier: 1.5
+                on_press: app.root.ms.TIME_UNIT = app.root.ms.TIME_UNIT * self.multiplier
                 background_color: 0, 0, 0, 0
                 canvas.before:
                 Color:
@@ -190,8 +190,8 @@
             ToggleButton:
                 group: "speed_multiplier"
                 text: "x1.75"
-                multiplier: -.75
-                on_press: app.root.multiplier = self.multiplier
+                multiplier: 1.75
+                on_press: app.root.ms.TIME_UNIT = app.root.ms.TIME_UNIT * self.multiplier
                 background_color: 0, 0, 0, 0
                 canvas.before:
                 Color:
@@ -202,8 +202,8 @@
             ToggleButton:
                 group: "speed_multiplier"
                 text: "x2"
-                multiplier: -1
-                on_press: app.root.multiplier = self.multiplier
+                multiplier: 2
+                on_press: app.root.ms.TIME_UNIT = app.root.ms.TIME_UNIT * self.multiplier
                 background_color: 0, 0, 0, 0
                 canvas.before:
                 Color:
