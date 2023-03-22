@@ -2,6 +2,8 @@
 #: import WipeTransition kivy.uix.screenmanager.WipeTransition
 #:import Clipboard kivy.core.clipboard.Clipboard
 #:import Clock kivy.clock
+#:import os os
+#:import webbrowser webbrowser
 <MorsifierApp>:
     size: root.size
     pos: root.pos
@@ -16,6 +18,8 @@
     bold: True
     size_hint: self.width, None
     height: self.texture_size[1]
+    max_lines: 1
+    hidden_text: ""
 
 <MainWidget>
     canvas.before:
@@ -30,36 +34,34 @@
         pos: root.pos
 
         Image:
+            id: logo
             source: "morsifier.png"
             size_hint: .5, .5
             pos_hint: {"center_x": .475, "center_y": .9}
+            color: (1, 1, 1, 1)
 
         TextInput:
             id: string_morsify
-            disabled: True if len(morse_label.text) > 0 else False
+            disabled: True if len(scroll_layout.children) > 0 else False
             size_hint: .75, .1
-            font_size: 32
+            font_size: self.height / 4
             pos_hint: {"center_x": .4, "center_y": .75}
             foreground_color: 0, 0, 0, 1
-            background_color: (1, 1, 1, .5)
-            
-            canvas.after:
-                Color:
-                    rgba: (1, 1, 1, .25) if self.focus == True else (1, 1, 1, .5) #(1, 1, 1, .25) if self.focus == True else (1, 1, 1, .5)
-                RoundedRectangle:
-                    size: self.size
-                    pos: self.pos
+            background_color: (1, 1, 1, 1)
+            background_active: "textinput_focus.png"
+            background_normal: "textinput_unfocus.png"
+            hint_text: "Type your message here..."
+            hint_text_color: 0, 0, 0, .45
 
         Button:
             id: proceed_button
             text: "Proceed"
-            disabled: True if len(morse_label.text) > 0 or len(string_morsify.text) == 0 else False
             text_size: self.size
             font_size: self.width/4
             halign: "center"
             valign: "middle"
-            on_press: app.root.string = string_morsify.text.upper(); app.root.translate_to_morse()
-            on_release: app.root.do_proceed(); copy_morse.disabled = False
+            on_press: app.root.text_string = string_morsify.text.upper(); app.root.translate_to_morse()
+            on_release: app.root.do_proceed(); copy_morse.disabled = False; self.disabled = True
             size_hint: .1, .1
             pos_hint: {"center_x": .83, "center_y": .75}
             background_color: 0, 0, 0, 0
@@ -77,8 +79,8 @@
             font_size: self.width/4
             halign: "center"
             valign: "middle"
-            on_press: app.root.typewriter.cancel(); app.root.morse_loop.cancel()
-            on_release: string_morsify.text = ""; morse_label.text = "";  copy_morse.disabled = True; app.root.delete_file(); app.root.clipboard = ''
+            on_press: app.root.typewriter.cancel(); app.root.morse_loop.cancel(); proceed_button.disabled = False
+            on_release: string_morsify.text = "";  copy_morse.disabled = True; app.root.delete_file(); app.root.clipboard = ''; app.root.delete_labels(); app.root.downtime = 0
             size_hint: .1, .1
             pos_hint: {"center_x": .935, "center_y": .75}
             background_color: 0, 0, 0, 0
@@ -111,20 +113,6 @@
                 height: self.minimum_height
                 size_hint_y: None
 
-
-                MorseLabel:
-                    id: morse_label
-                # Label:
-                #     id: morse_label
-                #     markup: True
-                #     color: 0, 0, 0, 1
-                #     font_size: 72
-                #     text_size: self.width, None
-                #     valign: "top"
-                #     halign: "left"
-                #     bold: True
-                #     size_hint: self.width, None
-                #     height: self.texture_size[1]
 
         ToggleButton:
             id: loop_toggle
@@ -189,7 +177,7 @@
             text: "Download"
             text_size: self.size
             font_size: self.width/5
-            disabled: False if morse_label.text != "" else True
+            disabled: False if os.path.exists("sounds/morse_code.wav") else True
             halign: "center"
             valign: "middle"
             on_release: app.root.show_save()
@@ -202,6 +190,19 @@
                 RoundedRectangle:
                     size: self.size
                     pos: self.pos
+
+        Button:
+            id: github
+            on_release: webbrowser.open("https://github.com/Hitijahujessy/morsifier")
+            size_hint: .0625, .15
+            pos_hint: {"center_x": .035, "center_y": .98}
+            background_color: 0, 0, 0, 0
+            canvas.after:
+                Color:
+                    rgba: (1, 1, 1, 1) if self.state == "normal" else (.8, .8, .8, 1)
+                Rectangle:
+                    pos: self.pos
+                    source: "github-mark.png"
 
 
 <SaveDialog>:
@@ -217,12 +218,12 @@
         TextInput:
             id: text_input
             size_hint_y: None
-            height: 30
+            height: 60
             multiline: False
 
         BoxLayout:
             size_hint_y: None
-            height: 30
+            height: 60
             Button:
                 text: "Cancel"
                 on_release: root.cancel()
