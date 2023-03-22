@@ -16,7 +16,7 @@ import morse_code_sound as ms
 
 if "macOS" in platform.platform():
     root_widget = Builder.load_file("app_mac.kv")
-    os.environ["KIVY_AUDIO"] = "avplayer"
+    os.environ["KIVY_AUDIO"] = "ffpyplayer"
 else:
     # Enable to prevent OpenGL error
     os.environ['KIVY_GL_BACKEND'] = 'angle_sdl2'
@@ -55,6 +55,7 @@ class MainWidget(Widget):
     morse_sound = ObjectProperty(None)
     downtime = NumericProperty(0)
     downtime_sum = NumericProperty(0)
+    multiplier = NumericProperty(1)
 
     def __init__(self, **kwargs):
         super(MainWidget, self).__init__(**kwargs)
@@ -200,6 +201,9 @@ class MainWidget(Widget):
             time -= (ms.TIME_UNIT / 2)
         self.downtime = 0
         return time
+    def time_multiplier(self):
+        ms.TIME_UNIT = .2
+        ms.TIME_UNIT = ms.TIME_UNIT / self.multiplier
 
     def highlight(self):
 
