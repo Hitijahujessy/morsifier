@@ -54,6 +54,7 @@ class MainWidget(Widget):
     morse_sound = ObjectProperty(None)
     downtime = NumericProperty(0)
     downtime_sum = NumericProperty(0)
+    multiplier = NumericProperty(1)
 
     def __init__(self, **kwargs):
         super(MainWidget, self).__init__(**kwargs)
@@ -191,6 +192,10 @@ class MainWidget(Widget):
             self.downtime = TIME_UNIT * 2
         
         # self.downtime = 0.05
+
+    def time_multiplier(self):
+        ms.TIME_UNIT = .2
+        ms.TIME_UNIT = ms.TIME_UNIT / self.multiplier
 
     def highlight(self):
 
