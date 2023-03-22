@@ -1,4 +1,5 @@
 import os
+import platform
 import shutil
 
 import kivy
@@ -10,7 +11,6 @@ from kivy.lang import Builder
 from kivy.properties import BooleanProperty, NumericProperty, ObjectProperty
 from kivy.uix.popup import Popup
 from kivy.uix.widget import Widget
-import platform
 
 import morse_code_sound as ms
 
@@ -18,7 +18,8 @@ if "macOS" in platform.platform():
     root_widget = Builder.load_file("app_mac.kv")
     os.environ["KIVY_AUDIO"] = "avplayer"
 else:
-    os.environ['KIVY_GL_BACKEND'] = 'angle_sdl2'  # Enable to prevent OpenGL error
+    # Enable to prevent OpenGL error
+    os.environ['KIVY_GL_BACKEND'] = 'angle_sdl2'
     root_widget = Builder.load_file('app.kv')
 
 
@@ -73,7 +74,7 @@ class MainWidget(Widget):
         string_list = []
         MAX_CHAR = 25
         lines = 1 + len(string_to_label) // MAX_CHAR
-        
+
         while lines > 0:
             n = 0
             line = None
@@ -82,15 +83,15 @@ class MainWidget(Widget):
                     if string_to_label[MAX_CHAR+1-n] == " ":
                         line = string_to_label[:MAX_CHAR+1-n]
                     else:
-                        n+= 1
+                        n += 1
                         if n > 6:
-                            print("n shouldnt be higher than 6, n ==: "+ str(n))
+                            print("n shouldnt be higher than 6, n ==: " + str(n))
                 except IndexError:
                     line = string_to_label[:]
             string_to_label = string_to_label[MAX_CHAR+1-n:]
             string_list.append(line)
             lines -= 1
-        
+
         print(string_list)
 
         for i, string in enumerate(string_list):
@@ -135,7 +136,6 @@ class MainWidget(Widget):
 
     def type_morse(self, dt):
         label = self.get_label()
-        print(dt)
         if label:
             self.morse_string = label.hidden_text
             index = len(label.hidden_text) - len(label.text)
@@ -147,14 +147,13 @@ class MainWidget(Widget):
                 self.type_morse, self.downtime)
 
             self.typewriter()
-            
+
         else:
             print("finished type writing")
             self.downtime = 0
 
     def repeat(self, dt):
         self.typewriter.cancel()
-        print(str(dt) + " = recorded loop dt")
         if self.downtime >= 1:
             self.play_sound(restart=True)
             self.scroll(self.ids.scroll_layout.children[-1])
@@ -175,7 +174,6 @@ class MainWidget(Widget):
                 self.morse_loop.cancel()
             for label in self.ids.scroll_layout.children:
                 label.text = label.hidden_text[:]
-        
 
     def set_downtime(self, char):
         TIME_UNIT = ms.TIME_UNIT / 2
@@ -189,8 +187,19 @@ class MainWidget(Widget):
             self.downtime = TIME_UNIT * 2
         elif char == '/':
             self.downtime = TIME_UNIT * 2
-        
+
         # self.downtime = 0.05
+
+    def get_string_time(self, string):
+        string = string.strip()
+        time = 0
+        for char in string:
+            self.set_downtime(char)
+            time += self.downtime
+        if string[-1] != " ":
+            time -= (ms.TIME_UNIT / 2)
+        self.downtime = 0
+        return time
 
     def highlight(self):
 
@@ -257,9 +266,21 @@ class MainWidget(Widget):
 
     def do_proceed(self):
         if self.ids.scroll_layout.children[-1].text == '':
+            self.downtime = 0
+            self.typewriter = Clock.create_trigger(
+                self.type_morse, self.downtime)
             self.typewriter()
+            self.get_wpm()
         else:
             self.morse_loop()
+
+    def get_wpm(self):
+        PARIS = self.create_morse_string("PARIS")
+        PARIS_TIME = self.get_string_time(PARIS)
+
+        word = round(60 / PARIS_TIME, 2)
+        print(str(word) + " words per minute")
+        return word
 
     def play_sound(self, restart=False):
         if restart:
@@ -323,3 +344,4 @@ class MorsifierApp(App):
 
 
 MorsifierApp().run()
+MainWidget().delete_file()
