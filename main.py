@@ -7,21 +7,20 @@ from kivy.app import App
 from kivy.clock import Clock
 from kivy.core.audio import SoundLoader
 from kivy.factory import Factory
+from kivy.factory import Factory
 from kivy.lang import Builder
 from kivy.properties import BooleanProperty, NumericProperty, ObjectProperty
 from kivy.uix.popup import Popup
 from kivy.uix.widget import Widget
+import platform
 
 import morse_code_sound as ms
 
 if "macOS" in platform.platform():
-    root_widget = Builder.load_file("app_mac.kv")
-    os.environ["KIVY_AUDIO"] = "ffpyplayer"
-else:
-    # Enable to prevent OpenGL error
-    os.environ['KIVY_GL_BACKEND'] = 'angle_sdl2'
     root_widget = Builder.load_file('app_mac.kv')
-
+else:
+    os.environ['KIVY_GL_BACKEND'] = 'angle_sdl2'  # Enable to prevent OpenGL error
+    root_widget = Builder.load_file('app.kv')
 
 MORSE_CODE_DICT = {'A': '.-', 'B': '-...',
                    'C': '-.-.', 'D': '-..', 'E': '.',
@@ -167,6 +166,13 @@ class MainWidget(Widget):
             self.typewriter = Clock.create_trigger(
                 self.type_morse, self.downtime)
 
+        label = self.get_label()
+        if label:
+            self.morse_string = label.hidden_text
+            index = len(label.hidden_text) - len(label.text)
+            label.text += label.hidden_text[-index]
+            self.get_downtime(label.hidden_text[-(index-1)])
+            self.typewriter = Clock.create_trigger(self.type_morse, self.downtime)
             self.typewriter()
 
         else:
@@ -361,6 +367,9 @@ class MainWidget(Widget):
             os.remove(f)
             if self.morse_sound:
                 self.morse_sound.unload()
+        else:
+            print("failed to delete: ", f)
+            print("file not found")
 
     def dismiss_popup(self):
         self._popup.dismiss()
