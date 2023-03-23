@@ -19,7 +19,7 @@ if "macOS" in platform.platform():
 else:
     # Enable to prevent OpenGL error
     os.environ['KIVY_GL_BACKEND'] = 'angle_sdl2'
-    root_widget = Builder.load_file('app.kv')
+    root_widget = Builder.load_file('app_mac.kv')
 
 MORSE_CODE_DICT = {'A': '.-', 'B': '-...',
                    'C': '-.-.', 'D': '-..', 'E': '.',
@@ -324,21 +324,24 @@ class MainWidget(Widget):
         PARIS = self.create_morse_string("PARIS")
         PARIS_TIME = self.get_string_time(PARIS, multiplier)
 
-        words = round(60 / PARIS_TIME, 2)
-        print(str(words) + " words per minute")
+        wpm = round(60 / PARIS_TIME, 2)
+        # print(str(words) + " words per minute")
         self.time_multiplier()
-        return words
+        return wpm
 
     def play_sound(self, restart=False):
-        if restart:
-            self.morse_sound.stop()
-        if self.morse_sound.state != "play":
-            self.morse_sound.play()
+        if self.morse_sound:
+            if restart:
+                self.morse_sound.stop()
+            if self.morse_sound.state != "play":
+                self.morse_sound.play()
 
-        if self.sound is False:
-            self.morse_sound.volume = 0
+            if self.sound is False:
+                self.morse_sound.volume = 0
+            else:
+                self.morse_sound.volume = 1
         else:
-            self.morse_sound.volume = 1
+            print("Couldnt play sound; self.morse_sound is not defined")
 
     def mute_sound(self):
         if self.sound is True:
