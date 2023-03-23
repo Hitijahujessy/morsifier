@@ -11,7 +11,7 @@
 <MorseLabel@Label>:
     markup: True
     color: 0, 0, 0, 1
-    font_size: self.width / 15
+    font_size: self.width / 10
     text_size: self.width, None
     valign: "top"
     halign: "left"
@@ -20,13 +20,12 @@
     height: self.texture_size[1]
     max_lines: 1
     hidden_text: ""
-    current_color: app.root.current_color
 
 <SpeedButton@Button>
     group: "speed_multiplier"
     text: " "
     multiplier: 1
-    on_press: app.root.multiplier = self.multiplier; app.root.change_tempo(self.multiplier); 
+    on_press: app.root.multiplier = self.multiplier; app.root.change_tempo(self.multiplier); app.root.update_buttons()
     background_color: 0, 0, 0, 0
     canvas.before:
         Color:
@@ -144,7 +143,7 @@
                     pos: self.pos   
             Image:
                 source: "icons/loop.png"
-                size: self.size
+                size: loop_toggle.size
                 pos: loop_toggle.x*1.075, loop_toggle.y*.995
                         
 
@@ -159,9 +158,10 @@
             id: morse_light
             pos_hint: {"center_x": .4, "center_y": .575}
             size_hint: .35, .17975
+            active: True
             canvas.after:
                 Color:
-                    rgba: root.current_color
+                    rgba: root.flashlight_color
                 RoundedRectangle:
                     pos: self.pos
                     size: self.size
@@ -185,7 +185,7 @@
                     pos: self.pos   
             Image:
                 source: "icons/copy.png"
-                size: self.size
+                size: copy_morse.size
                 pos: copy_morse.x*1.045, copy_morse.y*.995
 
 
@@ -208,7 +208,7 @@
                     pos: self.pos   
             Image:
                 source: "icons/unmute.png" if  mute_sound.state == "normal" else "icons/mute.png"
-                size: self.size
+                size: mute_sound.size
                 pos: (mute_sound.x*1.25, mute_sound.y*.995) if mute_sound.state == "normal" else (mute_sound.x*1.1125, mute_sound.y*.995)
 
 
@@ -231,15 +231,15 @@
                     pos: self.pos   
             Image:
                 source: "icons/download.png"
-                size: self.size
+                size: download_morse.size
                 pos: download_morse.x*1.025, download_morse.y*.995
 
 
         Button:
             id: github
             on_release: webbrowser.open("https://github.com/Hitijahujessy/morsifier")
-            size_hint: .0625, .15
-            pos_hint: {"center_x": .035, "center_y": .98}
+            size_hint: 0.07,0.08
+            pos_hint: {"x": .01, "top": .98}
             background_color: 0, 0, 0, 0
             canvas.after:
                 Color:
@@ -247,6 +247,7 @@
                 Rectangle:
                     pos: self.pos
                     source: "github-mark.png"
+                    size: github.size
 
 
 <SaveDialog>:

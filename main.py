@@ -54,14 +54,16 @@ class MainWidget(Widget):
     downtime = NumericProperty(0)
     downtime_sum = NumericProperty(0)
     multiplier = NumericProperty(1)
-    current_color = ObjectProperty((0, 0, 0, 1))
+    flashlight_color = ObjectProperty((0, 0, 0, 1))
 
     def __init__(self, **kwargs):
         super(MainWidget, self).__init__(**kwargs)
         self.typewriter = Clock.create_trigger(self.type_morse, self.downtime)
         self.morse_loop = Clock.create_trigger(self.repeat, self.downtime)
-        self.flashlight = Clock.create_trigger(self.light_switch, self.downtime)
         self.create_buttons()
+        
+        # Set the default wpm to 12
+        self.change_tempo(self.speed_multi_dict["12"])
 
     def translate_to_morse(self):
         self.morse_string = self.create_morse_string(self.text_string)
@@ -123,6 +125,7 @@ class MainWidget(Widget):
 
     def create_buttons(self):
         speed_list = [6, 8, 10, 12, 14, 16, 20, 22, 24, 26]
+        self.speed_multi_dict = {}
         for speed in speed_list:
             multi = 0.1
             while speed != int(self.get_wpm(multi)):
@@ -131,6 +134,9 @@ class MainWidget(Widget):
             self.ids.button_grid.add_widget(button)
             button.text = str(speed)
             button.multiplier = multi
+            self.speed_multi_dict[str(speed)] = multi
+        
+        
 
     def update_buttons(self):
         for button in self.ids.button_grid.children:
@@ -164,6 +170,9 @@ class MainWidget(Widget):
             self.set_downtime(label.text[-1])
             if label.text == label.hidden_text:
                 self.scroll(label)
+            if self.ids.morse_light.active == True:
+                if label.text[-1] == "." or label.text[-1] == "-":
+                    self.set_light_bar(self.downtime)
 
             self.typewriter = Clock.create_trigger(
                 self.type_morse, self.downtime)
@@ -172,31 +181,51 @@ class MainWidget(Widget):
         else:
             print("finished type writing")
             self.downtime = 0
+            self.loop_toggle()
 
     def repeat(self, dt):
         self.typewriter.cancel()
+
         if self.downtime >= 1.5:
             self.play_sound(restart=True)
             self.scroll(self.ids.scroll_layout.children[-1])
         else:
             self.play_sound()
+
+        # Highlight the next character in red
+        # t returns a string that tells you how it finished
         t = self.highlight()
-        self.morse_string = self.morse_string[1:]
+
+        # Will set the downtime according the next occuring character
+        # If there is none then the downtime will be set to 2
         try:
             self.set_downtime(self.morse_string[0])
         except IndexError:
             self.downtime = 2
         self.morse_loop = Clock.create_trigger(self.repeat, self.downtime)
         self.morse_loop()
+
+        # Flash light if its active
+        if self.ids.morse_light.active is True:
+            if self.morse_string[0] == "." or self.morse_string[0] == "-":
+                self.set_light_bar(self.downtime)
+
+        # Remove the first character of the string
+        self.morse_string = self.morse_string[1:]
+
+        # If the morse string is finished decide if it will loop again
         if len(self.morse_string) == 0:
             if self.ids.loop_toggle.state == "down":
                 self.morse_string = self.clipboard
             else:
                 self.morse_loop.cancel()
+            # make sure the label texts are correctly set
             for label in self.ids.scroll_layout.children:
                 label.text = label.hidden_text[:]
 
     def set_downtime(self, char):
+
+        # The sound generator halves the time [ms.TIME_UNIT] when creating the file so we do it again here
         TIME_UNIT = ms.TIME_UNIT / 2
         if char == '.':
             self.downtime = TIME_UNIT
@@ -209,9 +238,10 @@ class MainWidget(Widget):
         elif char == '/':
             self.downtime = TIME_UNIT * 2
 
-        # self.downtime = 0.05
-
     def get_string_time(self, string, multiplier=1):
+        """Returns the amount of time a string will take to finish playing with default wpm 12"""
+        if isinstance(multiplier, int):
+            multiplier = self.speed_multi_dict["12"]
         string = string.strip()
         time = 0
         self.time_multiplier(multiplier)
@@ -282,34 +312,13 @@ class MainWidget(Widget):
     def scroll(self, label):
         self.ids.scroll_view.scroll_to(label)
 
-    def light_switch(self, dt):
-        print("let there b light")
-        label = self.get_label()
-        if label:
-            self.morse_string = label.hidden_text
-            index = len(label.hidden_text) - len(label.text)
-            if label.hidden_text[-index] != " ":
-                if label.hidden_text[-index] != "/":
-                    self.current_color = (0, 0, 0, 1)
-                self.current_color = (0, 0, 0, 1)
-            else:
-                self.current_color = (1, 1, 1, 1)
-            self.set_downtime(label.text[-1])
-            
-            self.flashlight = Clock.create_trigger(
-                self.light_switch, self.downtime)
-            self.flashlight()
+    def set_light_bar(self, dt):
 
-        else:
-            print("finished light switching")
-            self.downtime = 0
-            self.flashlight.cancel()
-            self.current_color = (0, 0, 0, 1)
-
-        # if self.current_color == (0, 0, 0, 1):
-        #     self.current_color = (1, 1, 1, 1)
-        # elif self.current_color == (1, 1, 1, 1):
-        #     self.current_color = (0, 0, 0, 1)
+        if self.flashlight_color == (0, 0, 0, 1):
+            self.flashlight_color = (1, 1, 1, 1)
+            deactivate = Clock.schedule_once(self.set_light_bar, dt/2)
+        elif self.flashlight_color == (1, 1, 1, 1):
+            self.flashlight_color = (0, 0, 0, 1)
 
     def loop_toggle(self):
         check = self.ids.loop_toggle
@@ -347,9 +356,6 @@ class MainWidget(Widget):
             self.typewriter = Clock.create_trigger(
                 self.type_morse, self.downtime)
             self.typewriter()
-            self.flashlight = Clock.create_trigger(
-                self.light_switch, self.downtime)
-            self.flashlight()
         else:
             self.morse_loop()
 
