@@ -55,11 +55,13 @@ class MainWidget(Widget):
     downtime = NumericProperty(0)
     downtime_sum = NumericProperty(0)
     multiplier = NumericProperty(1)
+    current_color = ObjectProperty((0, 0, 0, 1))
 
     def __init__(self, **kwargs):
         super(MainWidget, self).__init__(**kwargs)
         self.typewriter = Clock.create_trigger(self.type_morse, self.downtime)
         self.morse_loop = Clock.create_trigger(self.repeat, self.downtime)
+        self.flashlight = Clock.create_trigger(self.light_switch, self.downtime)
         self.create_buttons()
 
     def translate_to_morse(self):
@@ -165,14 +167,6 @@ class MainWidget(Widget):
                 self.scroll(label)
             self.typewriter = Clock.create_trigger(
                 self.type_morse, self.downtime)
-
-        label = self.get_label()
-        if label:
-            self.morse_string = label.hidden_text
-            index = len(label.hidden_text) - len(label.text)
-            label.text += label.hidden_text[-index]
-            self.get_downtime(label.hidden_text[-(index-1)])
-            self.typewriter = Clock.create_trigger(self.type_morse, self.downtime)
             self.typewriter()
 
         else:
@@ -257,7 +251,6 @@ class MainWidget(Widget):
                 break
 
     def highlight(self):
-
         next_label = self.ids.scroll_layout.children[-1]
         do_next_label = False
         for label in reversed(self.ids.scroll_layout.children):
@@ -288,6 +281,35 @@ class MainWidget(Widget):
 
     def scroll(self, label):
         self.ids.scroll_view.scroll_to(label)
+
+    def light_switch(self, dt):
+        print("let there b light")
+        label = self.get_label()
+        if label:
+            self.morse_string = label.hidden_text
+            index = len(label.hidden_text) - len(label.text)
+            if label.hidden_text[-index] != " ":
+                if label.hidden_text[-index] != "/":
+                    self.current_color = (0, 0, 0, 1)
+                self.current_color = (0, 0, 0, 1)
+            else:
+                self.current_color = (1, 1, 1, 1)
+            self.set_downtime(label.text[-1])
+            
+            self.flashlight = Clock.create_trigger(
+                self.light_switch, self.downtime)
+            self.flashlight()
+
+        else:
+            print("finished light switching")
+            self.downtime = 0
+            self.flashlight.cancel()
+            self.current_color = (0, 0, 0, 1)
+
+        # if self.current_color == (0, 0, 0, 1):
+        #     self.current_color = (1, 1, 1, 1)
+        # elif self.current_color == (1, 1, 1, 1):
+        #     self.current_color = (0, 0, 0, 1)
 
     def loop_toggle(self):
         check = self.ids.loop_toggle
@@ -325,6 +347,9 @@ class MainWidget(Widget):
             self.typewriter = Clock.create_trigger(
                 self.type_morse, self.downtime)
             self.typewriter()
+            self.flashlight = Clock.create_trigger(
+                self.light_switch, self.downtime)
+            self.flashlight()
         else:
             self.morse_loop()
 
