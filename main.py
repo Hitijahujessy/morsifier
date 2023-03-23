@@ -131,6 +131,14 @@ class MainWidget(Widget):
             self.ids.button_grid.add_widget(button)
             button.text = str(speed)
             button.multiplier = multi
+    
+    def update_buttons(self):
+        for button in self.ids.button_grid.children:
+            button.disabled = False
+        for button in self.ids.button_grid.children:
+            if button.multiplier == self.multiplier:
+                button.disabled = True
+                break
 
     def create_morse_string(self, string):
         string = string.strip()
@@ -221,6 +229,7 @@ class MainWidget(Widget):
 
     def change_tempo(self, multiplier):
         self.time_multiplier(multiplier)
+        self.multiplier = multiplier
         ms.create_sounds()
         if self.clipboard:
             ms.create_wav_file(self.clipboard)

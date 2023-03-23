@@ -19,13 +19,13 @@
     size_hint: self.width, None
     height: self.texture_size[1]
     max_lines: 1
-    hidden_text: ""
+    hidden_text: ""    
 
 <SpeedButton@Button>
     group: "speed_multiplier"
     text: " "
     multiplier: 1
-    on_press: app.root.multiplier = self.multiplier; app.root.change_tempo(self.multiplier); 
+    on_press: app.root.multiplier = self.multiplier; app.root.change_tempo(self.multiplier); app.root.update_buttons()
     background_color: 0, 0, 0, 0
     canvas.before:
         Color:
