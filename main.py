@@ -7,20 +7,19 @@ from kivy.app import App
 from kivy.clock import Clock
 from kivy.core.audio import SoundLoader
 from kivy.factory import Factory
-from kivy.factory import Factory
 from kivy.lang import Builder
 from kivy.properties import BooleanProperty, NumericProperty, ObjectProperty
 from kivy.uix.popup import Popup
 from kivy.uix.widget import Widget
-import platform
 
 import morse_code_sound as ms
 
 if "macOS" in platform.platform():
     root_widget = Builder.load_file('app_mac.kv')
 else:
-    os.environ['KIVY_GL_BACKEND'] = 'angle_sdl2'  # Enable to prevent OpenGL error
-    root_widget = Builder.load_file('app.kv')
+    # Enable to prevent OpenGL error
+    os.environ['KIVY_GL_BACKEND'] = 'angle_sdl2'
+    root_widget = Builder.load_file('app_mac.kv')
 
 MORSE_CODE_DICT = {'A': '.-', 'B': '-...',
                    'C': '-.-.', 'D': '-..', 'E': '.',
@@ -132,7 +131,7 @@ class MainWidget(Widget):
             self.ids.button_grid.add_widget(button)
             button.text = str(speed)
             button.multiplier = multi
-    
+
     def update_buttons(self):
         for button in self.ids.button_grid.children:
             button.disabled = False
@@ -165,6 +164,7 @@ class MainWidget(Widget):
             self.set_downtime(label.text[-1])
             if label.text == label.hidden_text:
                 self.scroll(label)
+
             self.typewriter = Clock.create_trigger(
                 self.type_morse, self.downtime)
             self.typewriter()
@@ -357,21 +357,24 @@ class MainWidget(Widget):
         PARIS = self.create_morse_string("PARIS")
         PARIS_TIME = self.get_string_time(PARIS, multiplier)
 
-        words = round(60 / PARIS_TIME, 2)
-        print(str(words) + " words per minute")
+        wpm = round(60 / PARIS_TIME, 2)
+        # print(str(words) + " words per minute")
         self.time_multiplier()
-        return words
+        return wpm
 
     def play_sound(self, restart=False):
-        if restart:
-            self.morse_sound.stop()
-        if self.morse_sound.state != "play":
-            self.morse_sound.play()
+        if self.morse_sound:
+            if restart:
+                self.morse_sound.stop()
+            if self.morse_sound.state != "play":
+                self.morse_sound.play()
 
-        if self.sound is False:
-            self.morse_sound.volume = 0
+            if self.sound is False:
+                self.morse_sound.volume = 0
+            else:
+                self.morse_sound.volume = 1
         else:
-            self.morse_sound.volume = 1
+            print("Couldnt play sound; self.morse_sound is not defined")
 
     def mute_sound(self):
         if self.sound is True:
