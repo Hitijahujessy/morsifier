@@ -21,6 +21,19 @@
     max_lines: 1
     hidden_text: ""
 
+<SpeedButton@Button>
+    group: "speed_multiplier"
+    text: " "
+    multiplier: 1
+    on_press: app.root.multiplier = self.multiplier; app.root.change_tempo(self.multiplier); app.root.update_buttons()
+    background_color: 0, 0, 0, 0
+    canvas.before:
+        Color:
+            rgba: (0, .4, .66, 1) if self.state == "normal" else (0, .2, .46, 1)
+        RoundedRectangle:
+            size: self.size
+            pos: self.pos
+
 <MainWidget>
     canvas.before:
         Color:
@@ -44,7 +57,7 @@
             id: string_morsify
             disabled: True if len(scroll_layout.children) > 0 else False
             size_hint: .75, .1
-            font_size: self.height / 4
+            font_size: "27sp"
             pos_hint: {"center_x": .4, "center_y": .75}
             foreground_color: 0, 0, 0, 1
             background_color: (1, 1, 1, 1)
@@ -129,6 +142,13 @@
                 RoundedRectangle:
                     size: self.size
                     pos: self.pos
+        
+        GridLayout:
+            id: button_grid
+            cols: 5
+            pos_hint: {"center_x": .5, "center_y": .635}
+            size_hint: .275, .11
+            spacing: 6
 
 
         Button:
@@ -194,8 +214,8 @@
         Button:
             id: github
             on_release: webbrowser.open("https://github.com/Hitijahujessy/morsifier")
-            size_hint: .0625, .15
-            pos_hint: {"center_x": .035, "center_y": .98}
+            size_hint: .0325, .05
+            pos_hint: {"center_x": .035, "center_y": .9}
             background_color: 0, 0, 0, 0
             canvas.after:
                 Color:

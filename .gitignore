@@ -4,3 +4,8 @@
 pyvenv.cfg
 
 .wav
+.vscode/settings.json
+sounds/sine320s.wav
+sounds/sine320l.wav
+sounds/sine0.wav
+__pycache__/morse_code_sound.cpython-310.pyc
