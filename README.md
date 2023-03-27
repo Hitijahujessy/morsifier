@@ -8,9 +8,13 @@ A Kivy application to translate text to-, listen to- and download morsecode.
 
 ## Description
 
+Morsifier is an application that allows users to translate text to morse code. The outputted morse code can be read, listened to and seen in the form of a simulated flashlight. The audiofiles containing the morse code can be saved to the user's computer.
+
+Morsifier currently only allows text-to-morse.
+
 ### Step-by-step
 
-Start by choosing a tempo given in wpm by clicking one of the numbered buttons.
+Start by choosing a tempo given in words-per-mimnute (wpm) by clicking one of the numbered buttons.
 Type in the alphanumerical text you want to translate to morse into the input box
 Press proceed
 The morse translation will show up in the box below and the corresponding morse sound will play
@@ -18,8 +22,9 @@ The morse translation will show up in the box below and the corresponding morse 
 - Press the sideways 8 button to continuously loop over the morse code
 - Press the speaker icon to mute/unmute the sound
 - Pressing the arrow pointing into a box icon will prompt a new window allowing you to save the morse sound file as a .wav to your computer
+- Pressing the "toggle flashlight" button enables a box that simulates morse code with a flashlight
 
-To translate another text press the reset button to allow textinput again
+To translate another text press the reset button to enable the text input again.
 
 ## Getting Started
 
@@ -28,6 +33,10 @@ To translate another text press the reset button to allow textinput again
 - Python 3.10
 - Kivy
 - NumPy
+
+#### Installing dependencies
+
+
 
 ### Executing program
 
