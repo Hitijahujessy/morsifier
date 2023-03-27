@@ -105,6 +105,15 @@ To install the latest cutting-edge Kivy from master, instead do:
 ```
 python -m pip install "kivy[base] @ https://github.com/kivy/kivy/archive/master.zip"
 ```
+
+#### Install Numpy
+
+In your terminal type the following command (preferably inside a virtual environment):
+```
+pip install numpy
+```
+
+
 ### Executing program
 
 After installing all of the dependencies, run `main.py` in your editor of choice or type the following command in your terminal:
