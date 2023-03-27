@@ -55,13 +55,13 @@
 
         TextInput:
             id: string_morsify
-            disabled: True if proceed_button.disabled == True else False
+            disabled: False
             size_hint: .84, .1
             font_size: "27sp"
             pos_hint: {"center_x": .445, "center_y": .75}
             foreground_color: 0, 0, 0, 1
             background_color: (1, 1, 1, 1)
-            background_active: "textinput_focus.png"#self.background_normal
+            background_active: "textinput_focus.png" #self.background_normal
             background_normal: "textinput_unfocus.png"
             hint_text: "Type your message here..."
             hint_text_color: 0, 0, 0, .45
@@ -73,8 +73,9 @@
             font_size: "18sp"
             halign: "center"
             valign: "middle"
+            disabled: True if string_morsify.text == "" else False
             on_press: app.root.text_string = string_morsify.text.upper(); app.root.translate_to_morse()
-            on_release: app.root.do_proceed(); copy_morse.disabled = False; self.disabled = True
+            on_release: app.root.do_proceed(); copy_morse.disabled = False; self.disabled = True; string_morsify.disabled = True
             size_hint: .1, .045
             pos_hint: {"center_x": .925, "center_y": .778}
             background_color: 0, 0, 0, 0
@@ -93,7 +94,7 @@
             halign: "center"
             valign: "middle"
             on_press: app.root.typewriter.cancel(); app.root.morse_loop.cancel(); proceed_button.disabled = False
-            on_release: string_morsify.text = "";  copy_morse.disabled = True; app.root.delete_file(); app.root.clipboard = ''; app.root.delete_labels()
+            on_release: string_morsify.text = ""; string_morsify.disabled = False;  copy_morse.disabled = True; app.root.delete_file(); app.root.clipboard = ''; app.root.delete_labels()
             size_hint: .1, .045
             pos_hint: {"center_x": .925, "center_y": .722}
             background_color: 0, 0, 0, 0
@@ -154,17 +155,25 @@
             size_hint: .35, .17975
             spacing: 22.78
 
-        Label:
+        ToggleButton:
             id: morse_light
             pos_hint: {"center_x": .4, "center_y": .575}
             size_hint: .35, .17975
             active: True
-            canvas.after:
+            text: "Toggle flashlight" if self.state == "normal" else ""
+            background_color: (0, 0, 0, 0) if self.state == "normal" else (0,0,0,0)
+            canvas.before:
                 Color:
-                    rgba: root.flashlight_color
+                    rgba: (0, .4, .66, 1)
+                RoundedRectangle:
+                    size: self.size[0] // 2, self.size[1] // 2
+                    pos: self.pos[0] + self.size[0] // 4, self.pos[1] + self.size[1] //4
+                Color:
+                    rgba: root.flashlight_color if self.state == "down" else (0,0,0,0)
                 RoundedRectangle:
                     pos: self.pos
                     size: self.size
+                
         
         Button:
             id: copy_morse
