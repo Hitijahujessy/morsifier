@@ -38,7 +38,7 @@ To translate another text press the reset button to enable the text input again.
 
 ##### Install Python 3.10.0
 
-Download the Python installer from <a href="https://www.python.org/downloads/">Python's official website</a>, or install with Homebrew using the following command:
+Download the Python installer from <a href="https://www.python.org/downloads/">Python's official website</a>, or install with <a href="https://brew.sh">Homebrew</a> by typing the following command in your terminal:
 ```
 brew install python@3.10
 ```
@@ -46,7 +46,15 @@ brew install python@3.10
 
 ### Executing program
 
-Run `main.py` in your editor of choice.
+After installing all of the dependencies, run `main.py` in your editor of choice or type the following command in your terminal:
+```
+python3 main.py
+```
+or
+```
+python3.10 main.py
+```
+
 
 ## Authors
 
