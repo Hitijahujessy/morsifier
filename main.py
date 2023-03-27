@@ -3,6 +3,7 @@ import platform
 import shutil
 
 import kivy
+kivy.require("2.1.0")
 from kivy.app import App
 from kivy.clock import Clock
 from kivy.core.audio import SoundLoader
@@ -61,7 +62,7 @@ class MainWidget(Widget):
         self.typewriter = Clock.create_trigger(self.type_morse, self.downtime)
         self.morse_loop = Clock.create_trigger(self.repeat, self.downtime)
         self.create_buttons()
-        
+
         # Set the default wpm to 12
         self.change_tempo(self.speed_multi_dict["12"])
 
@@ -124,6 +125,7 @@ class MainWidget(Widget):
                 print("failed to delete label:" + label.id)
 
     def create_buttons(self):
+        """Create wpm buttons"""
         speed_list = [6, 8, 10, 12, 14, 16, 20, 22, 24, 26]
         self.speed_multi_dict = {}
         for speed in speed_list:
@@ -136,6 +138,7 @@ class MainWidget(Widget):
             button.multiplier = multi
             self.speed_multi_dict[str(speed)] = multi
         
+        """Create flashlight button"""
         
 
     def update_buttons(self):
@@ -313,12 +316,12 @@ class MainWidget(Widget):
         self.ids.scroll_view.scroll_to(label)
 
     def set_light_bar(self, dt):
-
-        if self.flashlight_color == (0, 0, 0, 1):
-            self.flashlight_color = (1, 1, 1, 1)
-            deactivate = Clock.schedule_once(self.set_light_bar, dt/2)
-        elif self.flashlight_color == (1, 1, 1, 1):
-            self.flashlight_color = (0, 0, 0, 1)
+        if self.ids.morse_light.state == "down":
+            if self.flashlight_color == (0, 0, 0, 1):
+                self.flashlight_color = (1, 1, 1, 1)
+                deactivate = Clock.schedule_once(self.set_light_bar, dt/2)
+            elif self.flashlight_color == (1, 1, 1, 1):
+                self.flashlight_color = (0, 0, 0, 1)
 
     def loop_toggle(self):
         check = self.ids.loop_toggle
