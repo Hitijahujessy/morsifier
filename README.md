@@ -92,3 +92,9 @@ Initial Release
 ## License
 
 This project is licensed under the MIT License - see the LICENSE.md file for details
+
+## Acknowledgements 
+
+<div> Download icon made by <a href="https://www.flaticon.com/authors/pixel-perfect" title="Pixel perfect"> Pixel perfect </a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div>
+<div> Loop icon made by <a href="https://www.flaticon.com/authors/icon-wind" title="icon wind"> icon wind </a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div>
+<div> Mute/Unmute/Copy icons made by <a href="https://www.freepik.com" title="Freepik"> Freepik </a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div>
