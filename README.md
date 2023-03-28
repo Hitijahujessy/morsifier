@@ -64,15 +64,18 @@ python3.10 main.py
 
 ### Step-by-step
 <div align="center"><img src="images/mainscreen.png" alt="Screenshot of the window where 'Hello!' is translated to morse" width="400" height="370"></div>
-There are only a few steps required to use Morsifier in it's most basic way. Type a message in the textbox, press the <img src="images/readme/proceedicon.png" alt="proceed button"> and the morse code will appear in the big gray box. The audio of the morse code will be played as well. When you're ready to write another message you can press the reset button.
+<p>There are only a few steps required to use Morsifier in it's most basic way. Type a message in the textbox, press <img src="images/README/proceedicon.png" alt="proceed button" width="50"> and the morse code will appear in the big gray box. The audio of the morse code will be played as well. When you're ready to write another message you can press <img src="images/README/reseticon.png" alt="proceed button" width="50">.</p>
 
-When the button with the infinity symbol is pressed, the morse code audio will loop and the code in the big gray box will be highlighted per character. Next to the loop button, you'll find the copy-to-clipboard button. When pressing this button, the morse code will be copied to your clipboard.
+<p><img src="images/README/loopicon.png" alt="proceed button" width="30"> : When this button is pressed, the morse code audio will loop and the code in the big gray box will be highlighted per character.</p>
+<p><img src="images/README/copyicon.png" alt="proceed button" width="30"> : Next to the loop button, you'll find the copy-to-clipboard button. When pressing , the morse code will be copied to your clipboard.</p>
 
-If you don't want the morse code to be played as audio you can press the mute button, located under the loop button. The audio can also be saved to your computer. To do this, press the download button, which is located next to the mute button.
+<p><img src="images/README/muteicon.png" alt="proceed button" width="30"> : If you don't want the morse code to be played as audio you can press the mute button.</p>
+<p><img src="images/README/downloadicon.png" alt="proceed button" width="30">: The audio can also be saved to your computer. To do this, press the download button.</p>
 
-You may also want to see what the morse code looks like if the message would be relayed using a flashlight. This is possible by pressing the toggle flashlight button.
+<p>You may also want to see what the morse code looks like if the message would be relayed using a flashlight. This is possible by pressing the toggle flashlight button, which looks like: </p>
+<img src="images/README/flashlighticon.png" alt="proceed button" width="90">
 
-Next to the toggle flashlight button you'll find 10 numbered buttons. These numbers represent the words-per-minute (wpm). These buttons can be pressed to change the speed of the outputted morse code. When you download the morse code audio file, it will use the currently selected wpm.
+<p>Next to the toggle flashlight button you'll find 10 numbered buttons. These numbers represent the words-per-minute (wpm). These buttons can be pressed to change the speed of the outputted morse code. When you download the morse code audio file, it will use the currently selected wpm.</p>
 
 
 ## Authors
