@@ -174,7 +174,7 @@ class MainWidget(Widget):
                 self.scroll(label)
             if self.ids.morse_light.active == True:
                 if label.text[-1] == "." or label.text[-1] == "-":
-                    self.set_light_bar(self.downtime)
+                    self.set_light_bar(self.get_downtime(label.text[-1])+ms.TIME_UNIT/6)
 
             self.typewriter = Clock.create_trigger(
                 self.type_morse, self.downtime)
@@ -205,18 +205,22 @@ class MainWidget(Widget):
         except IndexError:
             self.downtime = 2
         self.morse_loop = Clock.create_trigger(self.repeat, self.downtime)
-        self.morse_loop()
+        
 
         # Flash light if its active
         if self.ids.morse_light.active is True:
             if self.morse_string[0] == "." or self.morse_string[0] == "-":
-                self.set_light_bar(self.downtime)
+                self.set_light_bar(self.get_downtime(self.morse_string[0])+ms.TIME_UNIT/6)
 
         # Remove the first character of the string
         self.morse_string = self.morse_string[1:]
-
+        self.morse_loop()
         # If the morse string is finished decide if it will loop again
         if len(self.morse_string) == 0:
+            self.downtime = ms.TIME_UNIT * 7
+            self.morse_loop.cancel()
+            self.morse_loop = Clock.create_trigger(self.repeat, self.downtime)
+            self.morse_loop()
             if self.ids.loop_toggle.state == "down":
                 self.morse_string = self.clipboard
             else:
@@ -239,6 +243,21 @@ class MainWidget(Widget):
             self.downtime = TIME_UNIT * 2
         elif char == '/':
             self.downtime = TIME_UNIT * 2
+            
+    def get_downtime(self, char) -> float:
+        TIME_UNIT = ms.TIME_UNIT / 2
+        time = 0
+        if char == '.':
+            time = TIME_UNIT
+        elif char == '-':
+            time = TIME_UNIT * 3
+        elif char == ' ':
+            time = TIME_UNIT * 5
+        elif char == '/':
+            time = TIME_UNIT * 7
+        else:
+            return 0
+        return time
 
     def get_string_time(self, string, multiplier=1):
         """Returns the amount of time a string will take to finish playing with default wpm 12"""
@@ -319,7 +338,7 @@ class MainWidget(Widget):
         if self.ids.morse_light.state == "down":
             if self.flashlight_color == (0, 0, 0, 1):
                 self.flashlight_color = (1, 1, 1, 1)
-                deactivate = Clock.schedule_once(self.set_light_bar, dt/2)
+                deactivate = Clock.schedule_once(self.set_light_bar, dt)
             elif self.flashlight_color == (1, 1, 1, 1):
                 self.flashlight_color = (0, 0, 0, 1)
 
