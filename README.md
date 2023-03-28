@@ -1,10 +1,8 @@
-# Morsifier
-
-A Kivy application to translate text to-, listen to- and download morsecode.
-
 <div align="center">
     <img width="450px" src="morsifier.png" />
 </div>
+
+<p align="center">A Kivy application to translate text to-, listen to- and download morsecode.</p>
 
 ## Description
 
@@ -17,7 +15,7 @@ Morsifier currently only allows text-to-morse.
 
 ### Dependencies
 
-- Python 3.10
+- Python 3.7 to 3.10
 - Kivy
 - NumPy
 - Pydub
@@ -67,10 +65,10 @@ python3.10 main.py
 <p>There are only a few steps required to use Morsifier in it's most basic way. Type a message in the textbox, press <img src="images/README/proceedicon.png" alt="proceed button" width="50"> and the morse code will appear in the big gray box. The audio of the morse code will be played as well. When you're ready to write another message you can press <img src="images/README/reseticon.png" alt="proceed button" width="50">.</p>
 
 <p><img src="images/README/loopicon.png" alt="proceed button" width="30"> : When this button is pressed, the morse code audio will loop and the code in the big gray box will be highlighted per character.</p>
-<p><img src="images/README/copyicon.png" alt="proceed button" width="30"> : Next to the loop button, you'll find the copy-to-clipboard button. When pressing , the morse code will be copied to your clipboard.</p>
+<p><img src="images/README/copyicon.png" alt="proceed button" width="30"> : Next to the loop button, you'll find the copy-to-clipboard button. When pressed , the morse code will be copied to your clipboard.</p>
 
 <p><img src="images/README/muteicon.png" alt="proceed button" width="30"> : If you don't want the morse code to be played as audio you can press the mute button.</p>
-<p><img src="images/README/downloadicon.png" alt="proceed button" width="30">: The audio can also be saved to your computer. To do this, press the download button.</p>
+<p><img src="images/README/downloadicon.png" alt="proceed button" width="30"> : The audio can also be saved to your computer. To do this, press the download button.</p>
 
 <p>You may also want to see what the morse code looks like if the message would be relayed using a flashlight. This is possible by pressing the toggle flashlight button, which looks like: </p>
 <img src="images/README/flashlighticon.png" alt="proceed button" width="90">
@@ -79,7 +77,7 @@ python3.10 main.py
 
 ### Video example
 Click on the image below to go to a Streamable video going over the program.<br /><br />
-<a href="https://streamable.com/e/31x0wz" title="Video example"><img src="images/README/examplemorse.png" alt="A video example of the program in use. Links to a streamable.com page" height="370" width="400" /></a>
+<a href="https://streamable.com/e/31x0wz" title="Video example"><img src="images/README/ezgif.com-video-to-gif.gif" alt="A video example of the program in use. Links to a streamable.com page" height="370" width="400" /></a>
 
 ## Authors
 
