@@ -93,7 +93,7 @@
             font_size: "18sp"
             halign: "center"
             valign: "middle"
-            on_press: app.root.typewriter.cancel(); app.root.morse_loop.cancel(); proceed_button.disabled = False
+            on_press: app.root.typewriter.cancel(); app.root.morse_loop.cancel()
             on_release: string_morsify.text = ""; string_morsify.disabled = False;  copy_morse.disabled = True; app.root.delete_file(); app.root.clipboard = ''; app.root.delete_labels()
             size_hint: .1, .045
             pos_hint: {"center_x": .925, "center_y": .722}
@@ -145,7 +145,7 @@
             Image:
                 source: "icons/loop.png"
                 size: loop_toggle.size
-                pos: loop_toggle.x*1.075, loop_toggle.y*.995
+                pos: loop_toggle.x*1.045, loop_toggle.y
                         
 
         GridLayout:
@@ -195,8 +195,8 @@
                     pos: self.pos   
             Image:
                 source: "icons/copy.png"
-                size: copy_morse.size
-                pos: copy_morse.x*1.045, copy_morse.y*.995
+                size: copy_morse.size[0] *0.9, copy_morse.size[1] *0.9
+                pos: copy_morse.x*1.045, copy_morse.y*1
 
 
         ToggleButton:
@@ -218,15 +218,14 @@
                     pos: self.pos   
             Image:
                 source: "icons/unmute.png" if  mute_sound.state == "normal" else "icons/mute.png"
-                size: mute_sound.size
-                pos: (mute_sound.x*1.25, mute_sound.y*.995) if mute_sound.state == "normal" else (mute_sound.x*1.1125, mute_sound.y*.995)
+                size: mute_sound.size[0] *0.9, mute_sound.size[1] *0.9
+                pos: (mute_sound.x*1.25, mute_sound.y*1.005) if mute_sound.state == "normal" else (mute_sound.x*1.1125, mute_sound.y*1.005)
 
 
         Button:
             id: download_morse
             text_size: self.size
             font_size: self.width/5
-            disabled: False if os.path.exists("sounds/morse_code.wav") else True
             halign: "center"
             valign: "middle"
             on_release: app.root.show_save()
@@ -241,8 +240,13 @@
                     pos: self.pos   
             Image:
                 source: "icons/download.png"
+<<<<<<< Updated upstream
                 size: download_morse.size
                 pos: download_morse.x*1.01, download_morse.y*.995
+=======
+                size: download_morse.size[0] *0.9, download_morse.size[1] *0.9
+                pos: download_morse.x*1.025, download_morse.y*1.01
+>>>>>>> Stashed changes
 
 
         Button:

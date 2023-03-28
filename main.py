@@ -1,19 +1,19 @@
+import morse_code_sound as ms
+from kivy.uix.widget import Widget
+from kivy.uix.popup import Popup
+from kivy.properties import BooleanProperty, NumericProperty, ObjectProperty
+from kivy.lang import Builder
+from kivy.factory import Factory
+from kivy.core.audio import SoundLoader
+from kivy.clock import Clock
+from kivy.app import App
 import os
 import platform
 import shutil
 
 import kivy
 kivy.require("2.1.0")
-from kivy.app import App
-from kivy.clock import Clock
-from kivy.core.audio import SoundLoader
-from kivy.factory import Factory
-from kivy.lang import Builder
-from kivy.properties import BooleanProperty, NumericProperty, ObjectProperty
-from kivy.uix.popup import Popup
-from kivy.uix.widget import Widget
 
-import morse_code_sound as ms
 
 if "macOS" in platform.platform():
     root_widget = Builder.load_file('app_mac.kv')
@@ -96,6 +96,8 @@ class MainWidget(Widget):
             string_to_label = string_to_label[MAX_CHAR+1-n:]
             string_list.append(line)
             lines -= 1
+            if string_to_label == "":
+                break
 
         print(string_list)
 
@@ -137,9 +139,6 @@ class MainWidget(Widget):
             button.text = str(speed)
             button.multiplier = multi
             self.speed_multi_dict[str(speed)] = multi
-        
-        """Create flashlight button"""
-        
 
     def update_buttons(self):
         for button in self.ids.button_grid.children:
@@ -257,6 +256,7 @@ class MainWidget(Widget):
         return time
 
     def time_multiplier(self, multiplier=1):
+        """Sets the correct time unit according to the multiplier"""
         ms.TIME_UNIT = .2
         ms.TIME_UNIT = ms.TIME_UNIT / multiplier
 
@@ -363,11 +363,11 @@ class MainWidget(Widget):
             self.morse_loop()
 
     def get_wpm(self, multiplier=1) -> float:
+        """Gets the words per minute according to the given time multiplier"""
         PARIS = self.create_morse_string("PARIS")
         PARIS_TIME = self.get_string_time(PARIS, multiplier)
 
         wpm = round(60 / PARIS_TIME, 2)
-        # print(str(words) + " words per minute")
         self.time_multiplier()
         return wpm
 
@@ -399,11 +399,12 @@ class MainWidget(Widget):
             except AttributeError:
                 print("self.morse_sound doesnt exist")
 
-    def delete_file(self, f="sounds/morse_code.wav"):
+    def delete_file(self, f="./sounds/morse_code.wav"):
         if os.path.exists(f):
-            os.remove(f)
             if self.morse_sound:
                 self.morse_sound.unload()
+            os.remove(f)
+            
         else:
             print("failed to delete: ", f)
             print("file not found")
@@ -412,10 +413,12 @@ class MainWidget(Widget):
         self._popup.dismiss()
 
     def show_save(self):
-        content = SaveDialog(save=self.save, cancel=self.dismiss_popup)
-        self._popup = Popup(title="Save file", content=content,
+        if os.path.exists("./sounds/morse_code.wav"):
+            content = SaveDialog(save=self.save, cancel=self.dismiss_popup)
+            self._popup = Popup(title="Save file", content=content,
                             size_hint=(0.9, 0.9))
-        self._popup.open()
+            self._popup.open()
+        
 
     def save(self, path, filename):
         src_dir = "sounds/morse_code.wav"

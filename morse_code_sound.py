@@ -1,5 +1,6 @@
 import struct
 import wave
+import os
 
 import numpy as np
 from pydub import AudioSegment
@@ -17,6 +18,7 @@ def sine_samples(freq, dur):
 
 
 def output_wave(path, frames):
+    path = os.path.abspath(os.path.join(os.path.dirname(__file__), path))
     output = wave.open(path, 'w')
     output.setparams((2, 2, RATE, 0, 'NONE', 'not compresses'))
     output.writeframes(frames)
