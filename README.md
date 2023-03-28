@@ -75,7 +75,7 @@ If you don't want the morse code to be played as audio you can press the `mute b
 
 You may also want to see what the morse code looks like if the message would be relayed using a flashlight. This is possible by pressing the `toggle flashlight` button.
 
-Next to the `toggle flashlight button` you'll find 10 numbered buttons. These numbers represent the `words-per-minute` (`wpm`). These buttons can be pressed to change the speed of the outputted morse code. When you download the `morse code audio file`, it will use the currently selected `wpm`. 
+Next to the `toggle flashlight button` you'll find 10 `numbered buttons`. These numbers represent the `words-per-minute` (`wpm`). These buttons can be pressed to change the speed of the outputted morse code. When you download the `morse code audio file`, it will use the currently selected `wpm`. 
 
 
 
