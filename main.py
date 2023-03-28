@@ -16,11 +16,11 @@ kivy.require("2.1.0")
 
 
 if "macOS" in platform.platform():
-    root_widget = Builder.load_file('app_mac.kv')
+    root_widget = Builder.load_file('app.kv')
 else:
     # Enable to prevent OpenGL error
     os.environ['KIVY_GL_BACKEND'] = 'angle_sdl2'
-    root_widget = Builder.load_file('app_mac.kv')
+    root_widget = Builder.load_file('app.kv')
 
 MORSE_CODE_DICT = {'A': '.-', 'B': '-...',
                    'C': '-.-.', 'D': '-..', 'E': '.',
