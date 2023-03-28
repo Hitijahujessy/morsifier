@@ -1,4 +1,5 @@
 import morse_code_sound as ms
+from morse_code_sound import Sound
 from kivy.uix.widget import Widget
 from kivy.uix.popup import Popup
 from kivy.properties import BooleanProperty, NumericProperty, ObjectProperty
@@ -73,6 +74,8 @@ class MainWidget(Widget):
         self.clipboard = self.morse_string
         ms.create_wav_file(self.morse_string)
         self.morse_sound = SoundLoader.load('sounds/morse_code.wav')
+        test_sound = Sound(self.morse_string, self.get_wpm())
+        test_sound.play()
         self.play_sound()
 
     def create_labels(self, string_to_label):
@@ -282,7 +285,7 @@ class MainWidget(Widget):
     def change_tempo(self, multiplier):
         self.time_multiplier(multiplier)
         self.multiplier = multiplier
-        ms.create_sounds()
+        ms.create_sounds(ms.TIME_UNIT)
         if self.clipboard:
             ms.create_wav_file(self.clipboard)
         if self.morse_sound:

@@ -2,6 +2,7 @@ import struct
 import wave
 import os
 
+from kivy.core.audio import SoundLoader
 import numpy as np
 from pydub import AudioSegment
 
@@ -32,13 +33,14 @@ def output_sound(path, freq, dur):
 
 
 
-def create_sounds():
-    output_sound('sounds/sine320s.wav', 320, TIME_UNIT)  # .
-    output_sound('sounds/sine320l.wav', 320, TIME_UNIT * 3)  # -
-    output_sound('sounds/sine0.wav', 0, TIME_UNIT)  # /
-    print("Created wav files with TIME_UNIT: " + str(TIME_UNIT))
+def create_sounds(time_unit):
+    time_unit = time_unit *2
+    output_sound('sounds/sine320s.wav', 320, time_unit)  # .
+    output_sound('sounds/sine320l.wav', 320, time_unit * 3)  # -
+    output_sound('sounds/sine0.wav', 0, time_unit)  # /
+    print("Created wav files with TIME_UNIT: " + str(time_unit))
 TIME_UNIT = 0.2
-create_sounds()
+create_sounds(TIME_UNIT)
 
 def create_wav_file(morse_string):
     play_sound = AudioSegment.from_wav('sounds/sine0.wav')
@@ -75,3 +77,62 @@ def create_wav_file(morse_string):
                 pass        
         
     play_sound.export("sounds/morse_code.wav", format='wav')
+
+class Sound():
+    def __init__(self, morse_string: str, wpm) -> None:
+        self.morse_string = morse_string
+        self.wpm = wpm
+        self.time_unit = self.wpm_to_time_unit(self.wpm)
+        # Create the right length dits and dots
+        create_sounds(self.time_unit)
+        # Then create the right morse wav file
+        create_wav_file(self.morse_string)
+        self.load()
+        
+    def __call__(self):
+        return self.track
+        
+    def wpm_to_time_unit(self, wpm: float):
+        time_unit = wpm / 60
+        return time_unit
+    
+    def change_speed(self, wpm):
+        self.unload()
+        time_unit = self.wpm_to_time_unit(wpm)
+        create_sounds(time_unit)
+        create_wav_file(self.morse_string)
+        self.load()
+    
+    def load(self, path="./sounds/morse_code.wav"):
+        if os.path.exists(path):
+            self.track = SoundLoader.load(path)
+        else:
+            print(path + " does not exist")
+        
+    def unload(self):
+        try:
+            self.track.unload()
+        except:
+            print("Couldnt unload track")
+            
+    def play(self):
+        try:
+            self.track.play()
+        except:
+            print("Couldnt play the track")
+    
+    def stop(self):
+        try:
+            self.track.stop()
+        except:
+            print("Couldnt stop the track")
+        
+    def restart(self):
+        self.stop()
+        self.play()
+    
+    def mute(self):
+        self.track.volume = 0
+        
+    def unmute(self):
+        self.track.volume = 1
