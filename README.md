@@ -1,5 +1,5 @@
 <div align="center">
-    <img width="450px" src="morsifier.png" />
+    <img width="450px" src="images/morsifier.png" />
 </div>
 
 <p align="center">A Kivy application to translate text to-, listen to- and download morsecode.</p>
