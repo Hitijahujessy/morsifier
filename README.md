@@ -77,6 +77,9 @@ python3.10 main.py
 
 <p>Next to the toggle flashlight button you'll find 10 numbered buttons. These numbers represent the words-per-minute (wpm). These buttons can be pressed to change the speed of the outputted morse code. When you download the morse code audio file, it will use the currently selected wpm.</p>
 
+### Video example
+Click on the image below to go to a Streamable video going over the program.<br /><br />
+<a href="https://streamable.com/e/31x0wz" title="Video example"><img src="images/README/examplemorse.png" alt="A video example of the program in use. Links to a streamable.com page" height="370" width="400" /></a>
 
 ## Authors
 
