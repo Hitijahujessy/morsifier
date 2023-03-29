@@ -53,6 +53,7 @@ class MainWidget(Widget):
     sound = BooleanProperty(True)
     savefile = ObjectProperty(None)
     morse_sound = ObjectProperty(None)
+    test_sound = ObjectProperty(None)
     downtime = NumericProperty(0)
     downtime_sum = NumericProperty(0)
     multiplier = NumericProperty(1)
@@ -64,9 +65,6 @@ class MainWidget(Widget):
         self.morse_loop = Clock.create_trigger(self.repeat, self.downtime)
         self.create_buttons()
 
-        # Set the default wpm to 12
-        self.change_tempo(self.speed_multi_dict["12"])
-
     def translate_to_morse(self):
         self.morse_string = self.create_morse_string(self.text_string)
         self.create_labels(self.morse_string)
@@ -74,9 +72,8 @@ class MainWidget(Widget):
         self.clipboard = self.morse_string
         ms.create_wav_file(self.morse_string)
         self.morse_sound = SoundLoader.load('sounds/morse_code.wav')
-        test_sound = Sound(self.morse_string, self.get_wpm())
-        test_sound.play()
-        self.play_sound()
+        self.test_sound = Sound(self.morse_string, self.get_wpm())
+        self.test_sound.play()
 
     def create_labels(self, string_to_label):
         string_list = []
@@ -192,10 +189,8 @@ class MainWidget(Widget):
         self.typewriter.cancel()
 
         if self.downtime >= 1.5:
-            self.play_sound(restart=True)
+            self.test_sound.restart()
             self.scroll(self.ids.scroll_layout.children[-1])
-        else:
-            self.play_sound()
 
         # Highlight the next character in red
         # t returns a string that tells you how it finished
@@ -248,7 +243,7 @@ class MainWidget(Widget):
             self.downtime = TIME_UNIT * 2
             
     def get_downtime(self, char) -> float:
-        TIME_UNIT = ms.TIME_UNIT / 2
+        TIME_UNIT = self.test_sound._time_unit
         time = 0
         if char == '.':
             time = TIME_UNIT
@@ -283,7 +278,7 @@ class MainWidget(Widget):
         ms.TIME_UNIT = ms.TIME_UNIT / multiplier
 
     def change_tempo(self, multiplier):
-        self.time_multiplier(multiplier)
+        """self.time_multiplier(multiplier)
         self.multiplier = multiplier
         ms.create_sounds(ms.TIME_UNIT)
         if self.clipboard:
@@ -291,7 +286,9 @@ class MainWidget(Widget):
         if self.morse_sound:
             if self.morse_sound.state == "play":
                 self.morse_sound.stop()
-        self.morse_sound = SoundLoader.load('sounds/morse_code.wav')
+        self.morse_sound = SoundLoader.load('sounds/morse_code.wav')"""
+        
+        self.test_sound.change_speed(self.get_wpm(multiplier))
 
         for label in self.ids.scroll_layout.children:
             if "[color" in label.text:
@@ -302,7 +299,9 @@ class MainWidget(Widget):
             elif label.text != label.hidden_text and label.text != "":
                 for label in self.ids.scroll_layout.children:
                     label.text = ""
-                self.play_sound(restart=True)
+                # self.play_sound(restart=True)
+                self.test_sound.restart()
+                print(self.test_sound().state)
                 break
 
     def highlight(self):
@@ -408,23 +407,20 @@ class MainWidget(Widget):
             print("Couldnt play sound; self.morse_sound is not defined")
 
     def mute_sound(self):
-        if self.sound is True:
-            self.sound = False
-            try:
-                self.morse_sound.volume = 0
-            except AttributeError:
-                print("self.morse_sound doesnt exist")
-        else:
-            self.sound = True
-            try:
-                self.morse_sound.volume = 1
-            except AttributeError:
-                print("self.morse_sound doesnt exist")
+        if self.test_sound:
+            if self.sound is True:
+                self.sound = False
+                self.test_sound.mute()
+            else:
+                self.sound = True
+                self.test_sound.unmute()
 
     def delete_file(self, f="./sounds/morse_code.wav"):
         if os.path.exists(f):
             if self.morse_sound:
                 self.morse_sound.unload()
+            if self.test_sound:
+                self.test_sound.unload()
             os.remove(f)
             
         else:

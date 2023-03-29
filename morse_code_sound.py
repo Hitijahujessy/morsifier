@@ -34,7 +34,6 @@ def output_sound(path, freq, dur):
 
 
 def create_sounds(time_unit):
-    time_unit = time_unit *2
     output_sound('sounds/sine320s.wav', 320, time_unit)  # .
     output_sound('sounds/sine320l.wav', 320, time_unit * 3)  # -
     output_sound('sounds/sine0.wav', 0, time_unit)  # /
@@ -82,9 +81,9 @@ class Sound():
     def __init__(self, morse_string: str, wpm) -> None:
         self.morse_string = morse_string
         self.wpm = wpm
-        self.time_unit = self.wpm_to_time_unit(self.wpm)
+        self._time_unit = self.wpm_to_time_unit(self.wpm)
         # Create the right length dits and dots
-        create_sounds(self.time_unit)
+        create_sounds(self._time_unit)
         # Then create the right morse wav file
         create_wav_file(self.morse_string)
         self.load()
@@ -98,10 +97,15 @@ class Sound():
     
     def change_speed(self, wpm):
         self.unload()
-        time_unit = self.wpm_to_time_unit(wpm)
-        create_sounds(time_unit)
+        self._time_unit = self.wpm_to_time_unit(wpm)
+        create_sounds(self._time_unit)
         create_wav_file(self.morse_string)
         self.load()
+        
+    def set_morse_string(self, morse_string, wpm=None):
+        self.morse_string = morse_string
+        if wpm:
+            self.change_speed(wpm)
     
     def load(self, path="./sounds/morse_code.wav"):
         if os.path.exists(path):
@@ -118,6 +122,7 @@ class Sound():
     def play(self):
         try:
             self.track.play()
+            print("Now playing with volume: " + str(self.track.volume))
         except:
             print("Couldnt play the track")
     
