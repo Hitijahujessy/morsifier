@@ -18,6 +18,7 @@ kivy.require("2.1.0")
 
 if "macOS" in platform.platform():
     root_widget = Builder.load_file('app.kv')
+    os.environ["KIVY_AUDIO"] = "audio_sdl2"
 else:
     # Enable to prevent OpenGL error
     os.environ['KIVY_GL_BACKEND'] = 'angle_sdl2'
