@@ -52,17 +52,17 @@ class MainWidget(Widget):
     loop = BooleanProperty(False)
     sound = BooleanProperty(True)
     savefile = ObjectProperty(None)
-    morse_sound = ObjectProperty(None)
     test_sound = ObjectProperty(None)
     downtime = NumericProperty(0)
+    wpm = NumericProperty(12)
     downtime_sum = NumericProperty(0)
-    multiplier = NumericProperty(1)
     flashlight_color = ObjectProperty((0, 0, 0, 1))
 
     def __init__(self, **kwargs):
         super(MainWidget, self).__init__(**kwargs)
         self.typewriter = Clock.create_trigger(self.type_morse, self.downtime)
         self.morse_loop = Clock.create_trigger(self.repeat, self.downtime)
+        self.test_sound = Sound(" ", wpm=12)
         self.create_buttons()
 
     def translate_to_morse(self):
@@ -71,8 +71,7 @@ class MainWidget(Widget):
         # Make sure that copy_morse copies the correct string
         self.clipboard = self.morse_string
         ms.create_wav_file(self.morse_string)
-        self.morse_sound = SoundLoader.load('sounds/morse_code.wav')
-        self.test_sound = Sound(self.morse_string, self.get_wpm())
+        self.test_sound.set_morse_string(self.morse_string)
         self.test_sound.play()
 
     def create_labels(self, string_to_label):
@@ -129,22 +128,16 @@ class MainWidget(Widget):
     def create_buttons(self):
         """Create wpm buttons"""
         speed_list = [6, 8, 10, 12, 14, 16, 20, 22, 24, 26]
-        self.speed_multi_dict = {}
         for speed in speed_list:
-            multi = 0.1
-            while speed != int(self.get_wpm(multi)):
-                multi += 0.01
             button = Factory.SpeedButton()
             self.ids.button_grid.add_widget(button)
             button.text = str(speed)
-            button.multiplier = multi
-            self.speed_multi_dict[str(speed)] = multi
 
     def update_buttons(self):
         for button in self.ids.button_grid.children:
             button.disabled = False
         for button in self.ids.button_grid.children:
-            if button.multiplier == self.multiplier:
+            if button.text == str(self.test_sound.wpm):
                 button.disabled = True
                 break
 
@@ -174,7 +167,7 @@ class MainWidget(Widget):
                 self.scroll(label)
             if self.ids.morse_light.active == True:
                 if label.text[-1] == "." or label.text[-1] == "-":
-                    self.set_light_bar(self.get_downtime(label.text[-1])+ms.TIME_UNIT/6)
+                    self.set_light_bar(self.get_downtime(label.text[-1])+self.test_sound._time_unit/6)
 
             self.typewriter = Clock.create_trigger(
                 self.type_morse, self.downtime)
@@ -188,7 +181,7 @@ class MainWidget(Widget):
     def repeat(self, dt):
         self.typewriter.cancel()
 
-        if self.downtime >= 1.5:
+        if self.test_sound().state == "stop":
             self.test_sound.restart()
             self.scroll(self.ids.scroll_layout.children[-1])
 
@@ -208,14 +201,15 @@ class MainWidget(Widget):
         # Flash light if its active
         if self.ids.morse_light.active is True:
             if self.morse_string[0] == "." or self.morse_string[0] == "-":
-                self.set_light_bar(self.get_downtime(self.morse_string[0])+ms.TIME_UNIT/6)
+                self.set_light_bar(self.get_downtime(self.morse_string[0])+self.test_sound._time_unit/6)
 
         # Remove the first character of the string
         self.morse_string = self.morse_string[1:]
         self.morse_loop()
+        
         # If the morse string is finished decide if it will loop again
         if len(self.morse_string) == 0:
-            self.downtime = ms.TIME_UNIT * 7
+            self.downtime = self.test_sound._time_unit * 7
             self.morse_loop.cancel()
             self.morse_loop = Clock.create_trigger(self.repeat, self.downtime)
             self.morse_loop()
@@ -230,7 +224,10 @@ class MainWidget(Widget):
     def set_downtime(self, char):
 
         # The sound generator halves the time [ms.TIME_UNIT] when creating the file so we do it again here
-        TIME_UNIT = ms.TIME_UNIT / 2
+        try: 
+            TIME_UNIT = self.test_sound._time_unit
+        except AttributeError:
+            TIME_UNIT = ms.TIME_UNIT / 2
         if char == '.':
             self.downtime = TIME_UNIT
             self.downtime += TIME_UNIT
@@ -243,7 +240,11 @@ class MainWidget(Widget):
             self.downtime = TIME_UNIT * 2
             
     def get_downtime(self, char) -> float:
-        TIME_UNIT = self.test_sound._time_unit
+        """Returns how much time it takes to go over given morse char"""
+        try:
+            TIME_UNIT = self.test_sound._time_unit
+        except AttributeError:
+            TIME_UNIT = ms.TIME_UNIT / 2
         time = 0
         if char == '.':
             time = TIME_UNIT
@@ -257,38 +258,9 @@ class MainWidget(Widget):
             return 0
         return time
 
-    def get_string_time(self, string, multiplier=1):
-        """Returns the amount of time a string will take to finish playing with default wpm 12"""
-        if isinstance(multiplier, int):
-            multiplier = self.speed_multi_dict["12"]
-        string = string.strip()
-        time = 0
-        self.time_multiplier(multiplier)
-        for char in string:
-            self.set_downtime(char)
-            time += self.downtime
-        if string[-1] != " ":
-            time -= (ms.TIME_UNIT / 2)
-        self.downtime = 0
-        return time
-
-    def time_multiplier(self, multiplier=1):
-        """Sets the correct time unit according to the multiplier"""
-        ms.TIME_UNIT = .2
-        ms.TIME_UNIT = ms.TIME_UNIT / multiplier
-
-    def change_tempo(self, multiplier):
-        """self.time_multiplier(multiplier)
-        self.multiplier = multiplier
-        ms.create_sounds(ms.TIME_UNIT)
-        if self.clipboard:
-            ms.create_wav_file(self.clipboard)
-        if self.morse_sound:
-            if self.morse_sound.state == "play":
-                self.morse_sound.stop()
-        self.morse_sound = SoundLoader.load('sounds/morse_code.wav')"""
-        
-        self.test_sound.change_speed(self.get_wpm(multiplier))
+    def change_tempo(self, wpm):
+        self.test_sound.stop()
+        self.test_sound.change_speed(wpm)
 
         for label in self.ids.scroll_layout.children:
             if "[color" in label.text:
@@ -299,7 +271,6 @@ class MainWidget(Widget):
             elif label.text != label.hidden_text and label.text != "":
                 for label in self.ids.scroll_layout.children:
                     label.text = ""
-                # self.play_sound(restart=True)
                 self.test_sound.restart()
                 print(self.test_sound().state)
                 break
@@ -308,6 +279,7 @@ class MainWidget(Widget):
         next_label = self.ids.scroll_layout.children[-1]
         do_next_label = False
         for label in reversed(self.ids.scroll_layout.children):
+            # Check which label the highlight is currently in
             if "[color=ff0000]" in label.text:
                 i = list(label.text).index("[") + 1
                 try:
@@ -349,10 +321,6 @@ class MainWidget(Widget):
         self.check_loop = Clock.create_trigger(self.activate_loop, 0)
         if check.state == "normal":
             self.loop = False
-            try:
-                self.morse_sound.stop()
-            except AttributeError:
-                pass
         elif check.state == "down":
             try:
                 self.scroll(self.ids.scroll_layout.children[-1])
@@ -373,6 +341,8 @@ class MainWidget(Widget):
                 self.morse_loop()
         else:
             self.check_loop()
+        if self.ids.loop_toggle.state == "normal":
+            self.check_loop.cancel()
 
     def do_proceed(self):
         if self.ids.scroll_layout.children[-1].text == '':
@@ -382,29 +352,6 @@ class MainWidget(Widget):
             self.typewriter()
         else:
             self.morse_loop()
-
-    def get_wpm(self, multiplier=1) -> float:
-        """Gets the words per minute according to the given time multiplier"""
-        PARIS = self.create_morse_string("PARIS")
-        PARIS_TIME = self.get_string_time(PARIS, multiplier)
-
-        wpm = round(60 / PARIS_TIME, 2)
-        self.time_multiplier()
-        return wpm
-
-    def play_sound(self, restart=False):
-        if self.morse_sound:
-            if restart:
-                self.morse_sound.stop()
-            if self.morse_sound.state != "play":
-                self.morse_sound.play()
-
-            if self.sound is False:
-                self.morse_sound.volume = 0
-            else:
-                self.morse_sound.volume = 1
-        else:
-            print("Couldnt play sound; self.morse_sound is not defined")
 
     def mute_sound(self):
         if self.test_sound:
@@ -417,9 +364,7 @@ class MainWidget(Widget):
 
     def delete_file(self, f="./sounds/morse_code.wav"):
         if os.path.exists(f):
-            if self.morse_sound:
-                self.morse_sound.unload()
-            if self.test_sound:
+            if self.test_sound():
                 self.test_sound.unload()
             os.remove(f)
             

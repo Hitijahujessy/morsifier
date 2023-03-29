@@ -1,6 +1,7 @@
 import struct
 import wave
 import os
+import scipy
 
 from kivy.core.audio import SoundLoader
 import numpy as np
@@ -34,6 +35,7 @@ def output_sound(path, freq, dur):
 
 
 def create_sounds(time_unit):
+    time_unit *= 2
     output_sound('sounds/sine320s.wav', 320, time_unit)  # .
     output_sound('sounds/sine320l.wav', 320, time_unit * 3)  # -
     output_sound('sounds/sine0.wav', 0, time_unit)  # /
@@ -92,11 +94,12 @@ class Sound():
         return self.track
         
     def wpm_to_time_unit(self, wpm: float):
-        time_unit = wpm / 60
+        time_unit = 60/(50*wpm)
         return time_unit
     
     def change_speed(self, wpm):
         self.unload()
+        self.wpm = wpm
         self._time_unit = self.wpm_to_time_unit(wpm)
         create_sounds(self._time_unit)
         create_wav_file(self.morse_string)
@@ -133,7 +136,6 @@ class Sound():
             print("Couldnt stop the track")
         
     def restart(self):
-        self.stop()
         self.play()
     
     def mute(self):
@@ -141,3 +143,12 @@ class Sound():
         
     def unmute(self):
         self.track.volume = 1
+        
+class SoundTranslator():
+    def __init__(self, path):
+        self.path = path
+        self.name = path
+    
+    def load(self):
+        self.sound = Sound(" ", 0)
+        self.sound.load(self.path)
