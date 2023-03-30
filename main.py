@@ -13,7 +13,7 @@ import shutil
 
 import kivy
 kivy.require("2.1.0")
-
+#demorsifier
 
 if "macOS" in platform.platform():
     root_widget = Builder.load_file('app.kv')

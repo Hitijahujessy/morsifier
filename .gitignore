@@ -5,8 +5,6 @@ pyvenv.cfg
 
 .wav
 .vscode/
-sounds/sine320s.wav
-sounds/sine320l.wav
-sounds/sine0.wav
+/sounds
 __pycache__/
 .idea/
